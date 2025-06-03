@@ -1,0 +1,23 @@
+canvas {
+  border: 1px solid #000;
+  touch-action: none; // Fixes some issues on mobile
+}
+
+
+// TODO: Make responsive and look professional
+.signature-pad {
+  // canvas {
+    width: 30vw;
+    max-width: 100%;
+    
+
+    @media (max-width: 768px) {
+      width: 90%;
+      // height: 100%;
+      height: auto;
+    }
+  // }
+  // width: ;
+  // height: 150px;
+  border: 1px solid #000;
+}

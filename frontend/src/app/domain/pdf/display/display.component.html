@@ -1,0 +1,11 @@
+<div>
+    <!-- TODO: Make a little easier to view in mobile -->
+    <pdf-viewer 
+        [src]="pdfUrl" 
+        [render-text]="true" 
+        [show-all]="true"
+        [fit-to-page]="true" 
+        class="pdf-viewer">
+    </pdf-viewer>
+</div>
+<app-document-sign [pdfUrl]="pdfUrl"></app-document-sign>
