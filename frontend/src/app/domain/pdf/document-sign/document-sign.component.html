@@ -1,8 +1,29 @@
-<div style="margin-top: 20px;">
-  <h3>Sign Below:</h3>
-  <canvas #signaturePad class="signature-pad"></canvas>
-  <div style="margin-top: 10px;">
-    <button (click)="clearSignature()">Clear</button>
-    <button (click)="saveSignature()">Save Signature</button>
+<div class="signature-container">
+  <!-- <h3>Parent Signatures</h3> -->
+
+  <div class="signature-row">
+    <!-- Parent 1 -->
+    <div class="signature-section">
+      <h4>Parent</h4>
+      <input type="text" [(ngModel)]="parent1Name" placeholder="Parent Name" class="name-input" />
+      <canvas #signaturePad1></canvas>
+      <div class="signature-controls">
+        <button (click)="clearSignature(1)">Clear</button>
+      </div>
+    </div>
+
+    <!-- Parent 2 -->
+    <div class="signature-section">
+      <h4>Parent</h4>
+      <input type="text" [(ngModel)]="parent2Name" placeholder="Parent Name" class="name-input" />
+      <canvas #signaturePad2></canvas>
+      <div class="signature-controls">
+        <button (click)="clearSignature(2)">Clear</button>
+      </div>
+    </div>
   </div>
+</div>
+
+<div class="submit-section">
+  <button (click)="saveSignatures()">Save Signed PDF</button>
 </div>

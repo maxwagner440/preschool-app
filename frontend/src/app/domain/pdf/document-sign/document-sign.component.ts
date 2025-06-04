@@ -1,111 +1,149 @@
 import { AfterViewInit, Component, ElementRef, input, ViewChild } from '@angular/core';
 import SignaturePad from 'signature_pad';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-document-sign',
   standalone: true,
   templateUrl: './document-sign.component.html',
   styleUrls: ['./document-sign.component.scss'],
-  imports: []
+  imports: [CommonModule, FormsModule]
 })
 export class DocumentSignComponent implements AfterViewInit {
-  @ViewChild('signaturePad', { static: false }) signaturePadElement!: ElementRef<HTMLCanvasElement>;
-  signaturePad!: SignaturePad;
+  @ViewChild('signaturePad1', { static: false }) signaturePad1Element!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('signaturePad2', { static: false }) signaturePad2Element!: ElementRef<HTMLCanvasElement>;
+
+  signaturePad1!: SignaturePad;
+  signaturePad2!: SignaturePad;
+
   pdfUrl = input.required<string>();
-  
-  pdfBytes!: Uint8Array;
+
+  parent1Name: string = '';
+  parent1Title: string = '';
+  parent2Name: string = '';
+  parent2Title: string = '';
+  currentDate: string = new Date().toLocaleDateString();
 
   ngAfterViewInit() {
-    // (pdfjsLib as any).GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.269/pdf.worker.min.js';
-    // this.initPdfViewer();
-    this.initSignaturePad();
+    this.initSignaturePad(this.signaturePad1Element.nativeElement, 1);
+    this.initSignaturePad(this.signaturePad2Element.nativeElement, 2);
   }
 
-  initSignaturePad() {
-    this.signaturePad = new SignaturePad(this.signaturePadElement.nativeElement);
+  initSignaturePad(canvas: HTMLCanvasElement, padNumber: number) {
+    const cssWidth = canvas.offsetWidth;
+    const desiredHeight = 120;
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = cssWidth * dpr;
+    canvas.height = desiredHeight * dpr;
+    canvas.style.width = cssWidth + 'px';
+    canvas.style.height = desiredHeight + 'px';
+
+    const context = canvas.getContext('2d')!;
+    context.scale(dpr, dpr);
+
+    if (padNumber === 1) {
+      this.signaturePad1 = new SignaturePad(canvas);
+    } else {
+      this.signaturePad2 = new SignaturePad(canvas);
+    }
   }
 
-  async saveSignature() {
-    if (this.signaturePad.isEmpty()) {
-      alert('Please provide a signature first.');
+  clearSignature(padNumber: number) {
+    if (padNumber === 1) {
+      this.signaturePad1.clear();
+    } else {
+      this.signaturePad2.clear();
+    }
+  }
+
+  async saveSignatures() {
+    if (
+      this.signaturePad1.isEmpty() ||
+      this.signaturePad2.isEmpty() ||
+      !this.parent1Name ||
+      !this.parent2Name
+    ) {
+      alert('Please provide both signatures and names.');
       return;
     }
 
-    const signatureDataUrl = this.signaturePad.toDataURL();
-  
-    // Fetch the original PDF
+    const signature1DataUrl = this.signaturePad1.toDataURL();
+    const signature2DataUrl = this.signaturePad2.toDataURL();
     const pdfBytes = await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
-  
-    // Load the PDF
     const pdfDoc = await PDFDocument.load(pdfBytes);
-  
-    // Embed the signature image
-    const pngImageBytes = await fetch(signatureDataUrl).then(res => res.arrayBuffer());
-    const pngImage = await pdfDoc.embedPng(pngImageBytes);
- 
 
-    // 4️⃣ Get the last page
+    const parent1SignatureBytes = await fetch(signature1DataUrl).then(res => res.arrayBuffer());
+    const parent2SignatureBytes = await fetch(signature2DataUrl).then(res => res.arrayBuffer());
+    const parent1Image = await pdfDoc.embedPng(parent1SignatureBytes);
+    const parent2Image = await pdfDoc.embedPng(parent2SignatureBytes);
+
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const pages = pdfDoc.getPages();
     const lastPage = pages[pages.length - 1];
 
-          
-    // 4️⃣ Embed a font
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-    // 5️⃣ Define signature line position
-    const lineX = 50;
-    const lineY = 100;
-    const currentDate = new Date().toLocaleDateString();
-
-    // 6️⃣ Draw the signature line text
-    lastPage.drawText(`Parent Signature: ______________________________________________      Date: ${currentDate}`, {
-      x: lineX,
-      y: lineY,
+    // Parent 1
+    lastPage.drawText(`Parent 1: ${this.parent1Name}`, {
+      x: 50,
+      y: 200,
       size: 12,
-      font: font,
+      font,
       color: rgb(0, 0, 0)
     });
-
-    // 7️⃣ Draw the signature image **exactly over the line**
-    // Adjust the width/height to fit neatly on the line
-    lastPage.drawImage(pngImage, {
-      x: lineX + 140, // adjust to start of the line
-      y: lineY - 5,   // slight adjustment to overlap the line
+    lastPage.drawText(`Title: ${this.parent1Title}`, {
+      x: 50,
+      y: 185,
+      size: 10,
+      font,
+      color: rgb(0, 0, 0)
+    });
+    lastPage.drawImage(parent1Image, {
+      x: 250,
+      y: 190,
       width: 150,
       height: 30
     });
 
-   
-    const signedPdfBytes = await pdfDoc.save();
-    const newUint8Array = new Uint8Array(signedPdfBytes);
-    const blob = new Blob([newUint8Array], { type: 'application/pdf' });
+    // Parent 2
+    lastPage.drawText(`Parent 2: ${this.parent2Name}`, {
+      x: 50,
+      y: 100,
+      size: 12,
+      font,
+      color: rgb(0, 0, 0)
+    });
+    lastPage.drawText(`Title: ${this.parent2Title}`, {
+      x: 50,
+      y: 85,
+      size: 10,
+      font,
+      color: rgb(0, 0, 0)
+    });
+    lastPage.drawImage(parent2Image, {
+      x: 250,
+      y: 90,
+      width: 150,
+      height: 30
+    });
 
+    // Date
+    lastPage.drawText(`Date: ${this.currentDate}`, {
+      x: 50,
+      y: 50,
+      size: 12,
+      font,
+      color: rgb(0, 0, 0)
+    });
+
+    const signedPdfBytes = await pdfDoc.save();
+    const blob = new Blob([new Uint8Array(signedPdfBytes)], { type: 'application/pdf' });
 
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.download = 'signed-document.pdf';
     link.click();
-
-
-    // TODO: Save document to database OR send to google drive??
   }
-
-  sendToApi(blob: Blob) {
-    // TODO: Send document to api
-    // NEEDS: Name of person, name of student?, date 
-    const formData = new FormData();
-    formData.append('file', blob, 'signed-document.pdf');
-
-    // this.http.post('/api/upload-signed-pdf', formData).subscribe(
-    //   response => console.log('Upload success:', response),
-    //   error => console.error('Upload error:', error)
-    // );
-  }
-
-  clearSignature() {
-    this.signaturePad.clear();
-  }
-
 }
