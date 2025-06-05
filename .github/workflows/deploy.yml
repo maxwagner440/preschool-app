@@ -38,7 +38,7 @@ jobs:
       # Deploy Angular app to S3 using AWS CLI
       - name: Deploy Angular frontend to S3
         run: |
-          aws s3 sync dist/frontend s3://image-bucket-owl-preschool --delete
+          aws s3 sync dist/frontend/browser s3://image-bucket-owl-preschool --delete
 
       # Install AWS SAM CLI
       - name: Install AWS SAM CLI
