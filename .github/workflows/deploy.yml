@@ -40,19 +40,33 @@ jobs:
         run: |
           aws s3 sync dist/frontend s3://image-bucket-owl-preschool --delete
 
-      # Install AWS SAM CLI for Lambda deployment
+
       - name: Install AWS SAM CLI
         run: |
           pip install aws-sam-cli
 
-      # Install Lambda dependencies
-      - name: Install Lambda dependencies
-        run: |
-          cd lambda
-          npm install
-
-      # Build and deploy Lambda + API Gateway
-      - name: Build and deploy Lambda with SAM
+      - name: Build Lambda & API Gateway with SAM
         run: |
           sam build -t template.yaml
+
+      - name: Deploy Lambda & API Gateway with SAM
+        run: |
           sam deploy --stack-name presigned-url-stack --s3-bucket sam-deploy-bucket-owl-preschool --region us-east-2 --capabilities CAPABILITY_IAM
+
+        
+      # # Install AWS SAM CLI for Lambda deployment
+      # - name: Install AWS SAM CLI
+      #   run: |
+      #     pip install aws-sam-cli
+
+      # Install Lambda dependencies
+      # - name: Install Lambda dependencies
+      #   run: |
+      #     cd lambda
+      #     npm install
+
+      # # Build and deploy Lambda + API Gateway
+      # - name: Build and deploy Lambda with SAM
+      #   run: |
+      #     sam build -t template.yaml
+      #     sam deploy --stack-name presigned-url-stack --s3-bucket sam-deploy-bucket-owl-preschool --region us-east-2 --capabilities CAPABILITY_IAM
