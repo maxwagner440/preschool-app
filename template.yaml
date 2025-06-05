@@ -10,7 +10,7 @@ Resources:
       FunctionName: generate-presigned-url
       Handler: index.handler
       Runtime: nodejs18.x
-      CodeUri: apps/lambda
+      CodeUri: lambda
       Timeout: 10
       Policies:
         - Version: "2012-10-17"
