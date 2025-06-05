@@ -59,12 +59,11 @@ jobs:
           cd apps/lambda
           npm install
 
-      - name: Deploy Lambda & API Gateway with SAM
-        uses: aws-actions/aws-sam-cli-action@v2
-        with:
-          sam-cli-version: 1.89.0
-          stack-name: presigned-url-stack
-          s3-bucket: sam-deploy-bucket-owl-preschool
-          region: us-east-2 
-          capabilities: CAPABILITY_IAM
-          template: template.yaml
+      - name: Install AWS SAM CLI
+        run: |
+          pip install aws-sam-cli
+
+      - name: Build and deploy Lambda & API Gateway with SAM
+        run: |
+          sam build -t template.yaml
+          sam deploy --stack-name presigned-url-stack --s3-bucket your-sam-deploy-bucket --region us-east-1 --capabilities CAPABILITY_IAM
