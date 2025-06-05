@@ -33,7 +33,8 @@ jobs:
 
       # Build Angular frontend
       - name: Build Angular app
-        run: npx nx build frontend --prod
+        run: npx nx build frontend --prod --skip-nx-cache
+
 
       # Deploy Angular app to S3 using OIDC credentials
       - name: Deploy to S3
