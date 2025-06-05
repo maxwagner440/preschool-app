@@ -1,0 +1,70 @@
+name: Deploy Angular Frontend and Lambda API
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::300487717239:role/GitHubActionsDeployRole
+          aws-region: us-east-2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install root dependencies
+        run: npm ci --legacy-peer-deps
+
+      # Build Angular frontend
+      - name: Build Angular app
+        run: npx nx build frontend --prod
+
+      # Deploy Angular app to S3 using OIDC credentials
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --delete
+        env:
+          AWS_S3_BUCKET: image-bucket-owl-preschool
+          AWS_REGION: us-east-2
+          SOURCE_DIR: dist/apps/frontend
+
+      # Invalidate CloudFront cache (if using CloudFront)
+      - name: Invalidate CloudFront cache
+        uses: chetan/invalidate-cloudfront-action@v2
+        with:
+          distribution-id: YOUR_CLOUDFRONT_DIST_ID
+          paths: "/*"
+          aws-region: us-east-2
+
+      # Deploy Lambda and API Gateway via SAM
+      - name: Install Lambda dependencies
+        run: |
+          cd apps/lambda
+          npm install
+
+      - name: Deploy Lambda & API Gateway with SAM
+        uses: aws-actions/aws-sam-cli-action@v2
+        with:
+          sam-cli-version: 1.89.0
+          stack-name: presigned-url-stack
+          s3-bucket: sam-deploy-bucket-owl-preschool
+          region: us-east-2 
+          capabilities: CAPABILITY_IAM
+          template: template.yaml

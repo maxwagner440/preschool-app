@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: Lambda to generate pre-signed URLs for S3 uploads.
+
+Resources:
+  GeneratePresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: generate-presigned-url
+      Handler: index.handler
+      Runtime: nodejs18.x
+      CodeUri: apps/lambda
+      Timeout: 10
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: s3:PutObject
+              Resource: arn:aws:s3:::image-bucket-owl-preschool/uploads/*
+      Environment:
+        Variables:
+          BUCKET_NAME: image-bucket-owl-preschool
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /generate-presigned-url
+            Method: POST

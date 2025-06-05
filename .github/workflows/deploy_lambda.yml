@@ -1,0 +1,40 @@
+# name: Deploy Lambda and API Gateway
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# permissions:
+#   id-token: write
+#   contents: read
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v3
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsDeployRole  # 🔥 your IAM role ARN
+#           aws-region: us-east-2
+
+#       - name: Install dependencies
+#         run: |
+#           cd apps/lambda
+#           npm install
+
+#       - name: Deploy Lambda and API Gateway with SAM
+#         uses: aws-actions/aws-sam-cli-action@v2
+#         with:
+#           sam-cli-version: 1.89.0
+#           debug: false
+#           stack-name: presigned-url-stack
+#           s3-bucket: sam-deploy-bucket-owl-preschool   # 🔥 your deploy bucket for Lambda zips
+#           region: us-east-2
+#           capabilities: CAPABILITY_IAM
+#           template: template.yaml
