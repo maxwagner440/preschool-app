@@ -44,7 +44,7 @@ jobs:
         env:
           AWS_S3_BUCKET: image-bucket-owl-preschool
           AWS_REGION: us-east-2
-          SOURCE_DIR: dist/apps/frontend
+          SOURCE_DIR: dist/frontend
 
       # Invalidate CloudFront cache (if using CloudFront)
       # - name: Invalidate CloudFront cache
@@ -57,7 +57,7 @@ jobs:
       # Deploy Lambda and API Gateway via SAM
       - name: Install Lambda dependencies
         run: |
-          cd apps/lambda
+          cd lambda
           npm install
 
       - name: Install AWS SAM CLI
