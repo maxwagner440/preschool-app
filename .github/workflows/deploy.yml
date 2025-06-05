@@ -46,12 +46,12 @@ jobs:
           SOURCE_DIR: dist/apps/frontend
 
       # Invalidate CloudFront cache (if using CloudFront)
-      - name: Invalidate CloudFront cache
-        uses: chetan/invalidate-cloudfront-action@v2
-        with:
-          distribution-id: YOUR_CLOUDFRONT_DIST_ID
-          paths: "/*"
-          aws-region: us-east-2
+      # - name: Invalidate CloudFront cache
+      #   uses: chetan/invalidate-cloudfront-action@v2
+      #   with:
+      #     distribution-id: YOUR_CLOUDFRONT_DIST_ID
+      #     paths: "/*"
+      #     aws-region: us-east-2
 
       # Deploy Lambda and API Gateway via SAM
       - name: Install Lambda dependencies
