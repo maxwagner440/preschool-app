@@ -27,3 +27,4 @@ Resources:
           Properties:
             Path: /generate-presigned-url
             Method: POST
+
