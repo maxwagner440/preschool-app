@@ -59,6 +59,14 @@ export class DocumentSignComponent implements AfterViewInit {
     }
   }
 
+  async sendPdfToS3(pdfBytes: Uint8Array) {
+    // const signature1DataUrl = this.signaturePad1.toDataURL();
+    // const signature2DataUrl = this.signaturePad2.toDataURL();
+    // const pdfBytes = await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
+    // const pdfDoc = await PDFDocument.load(pdfBytes);
+    
+  }
+
   async saveSignatures() {
     if (
       this.signaturePad1.isEmpty() ||
