@@ -8,6 +8,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^19.2.14",
     "@angular/common": "~19.2.0",
     "@angular/compiler": "~19.2.0",
     "@angular/core": "~19.2.0",
@@ -25,6 +26,7 @@
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
     "ng2-pdf-viewer": "^10.4.0",
+    "ngx-toastr": "^19.0.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.3.31",
     "reflect-metadata": "^0.1.13",

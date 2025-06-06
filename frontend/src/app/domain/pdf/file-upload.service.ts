@@ -44,6 +44,7 @@ export class FileUploadService {
       console.log('Upload successful!');
     } catch (error) {
       console.error('Error uploading PDF to S3:', error);
+      throw error;
     }
   }
 }

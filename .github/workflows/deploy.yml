@@ -50,7 +50,7 @@ jobs:
                 {
                   "AllowedHeaders": ["*"],
                   "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
-                  "AllowedOrigins": ["https://e3vfz5egai.execute-api.us-east-2.amazonaws.com"],
+                  "AllowedOrigins": ["http://image-bucket-owl-preschool.s3-website.us-east-2.amazonaws.com"],
                   "ExposeHeaders": []
                 }
               ]

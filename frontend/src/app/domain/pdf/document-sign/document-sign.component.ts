@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FileUploadService } from '../file-upload.service';
 import { Subscription } from 'rxjs';
+// import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-document-sign',
@@ -38,9 +39,28 @@ export class DocumentSignComponent {
 
   latestPdfBlob: Blob | null = null;
 
+  showSuccessToast = false;
+showErrorToast = false;
   subscription = new Subscription();
 
   constructor(private _fileUploadService: FileUploadService) {}
+
+
+showToast(type: 'success' | 'error') {
+  if (type === 'success') {
+    this.showSuccessToast = true;
+  } else {
+    this.showErrorToast = true;
+  }
+
+  // Auto-hide after 3 seconds
+  setTimeout(() => this.hideToast(), 3000);
+}
+
+hideToast() {
+  this.showSuccessToast = false;
+  this.showErrorToast = false;
+}
 
   openSignModal(number: number) {
     this.signingParent = number;
@@ -107,6 +127,7 @@ export class DocumentSignComponent {
 
 
   sendPdfToS3(blob: Blob): void {
+    try {
     this.subscription.add(
       this._fileUploadService.getPresignedUrl(
         `${this.parent1Name}-${this.parent2Name}.pdf`,
@@ -118,13 +139,20 @@ export class DocumentSignComponent {
           const result = await this._fileUploadService.uploadPdfToS3(blob, response.signedUrl);
 
           this.clearAll();
+
+          this.showToast('success');
         },
         error: (error) => {
+          this.showToast('error');
           console.error('Error uploading PDF to S3:', error);
         }
       })
     );
+  } catch (error) {
+    console.error('Error uploading PDF to S3:', error);
+    this.showToast('error');
   }
+}
 
   async saveSignatures() {
     
@@ -138,21 +166,6 @@ export class DocumentSignComponent {
     // this.sendPdfToS3(blob); 
   }
 
-  downloadOriginalPdf() {
-    if (this.latestPdfBlob) {
-      const link = document.createElement('a');
-      link.href = this.pdfUrl(); // or your actual static URL
-      link.download = 'document.pdf'; // desired filename
-      link.target = '_blank'; // optional: opens in new tab (helpful for some browsers)
-      link.click();
-      
-      // const url = URL.createObjectURL(this.latestPdfBlob);
-      // const link = document.createElement('a');
-      // link.href = url;
-      // link.download = 'signed-document.pdf';  
-      // link.click();
-    }
-  }
 
   downloadSignedPdf() {
     if (this.latestPdfBlob) {
