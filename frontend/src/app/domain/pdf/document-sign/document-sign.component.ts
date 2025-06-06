@@ -3,6 +3,8 @@ import SignaturePad from 'signature_pad';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FileUploadService } from '../file-upload.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-document-sign',
@@ -25,6 +27,10 @@ export class DocumentSignComponent implements AfterViewInit {
   parent2Name: string = '';
   parent2Title: string = '';
   currentDate: string = new Date().toLocaleDateString();
+
+  subscription = new Subscription();
+
+  constructor(private _fileUploadService: FileUploadService) {}
 
   ngAfterViewInit() {
     this.initSignaturePad(this.signaturePad1Element.nativeElement, 1);
@@ -59,12 +65,17 @@ export class DocumentSignComponent implements AfterViewInit {
     }
   }
 
-  async sendPdfToS3(pdfBytes: Uint8Array) {
-    // const signature1DataUrl = this.signaturePad1.toDataURL();
-    // const signature2DataUrl = this.signaturePad2.toDataURL();
-    // const pdfBytes = await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
-    // const pdfDoc = await PDFDocument.load(pdfBytes);
-    
+  sendPdfToS3(blob: Blob): void {
+    this.subscription.add(
+      this._fileUploadService.getPresignedUrl(
+        `${this.parent1Name}-${this.parent2Name}-${this.currentDate}.pdf`,
+        'application/pdf'
+      ).subscribe(async (response) => {
+        console.log(response);
+        console.log("Now uploading to S3")
+        await this._fileUploadService.uploadPdfToS3(blob, response.signedUrl);
+      })
+    );
   }
 
   async saveSignatures() {
@@ -153,5 +164,7 @@ export class DocumentSignComponent implements AfterViewInit {
     link.href = url;
     link.download = 'signed-document.pdf';
     link.click();
+
+    this.sendPdfToS3(blob); 
   }
 }

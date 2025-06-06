@@ -27,4 +27,8 @@ Resources:
           Properties:
             Path: /generate-presigned-url
             Method: POST
+            Cors:
+              AllowMethods: "'OPTIONS,POST'"
+              AllowHeaders: "'Content-Type'"
+              AllowOrigin: "'*'"
 
