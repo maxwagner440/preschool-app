@@ -4,6 +4,15 @@ Transform: AWS::Serverless-2016-10-31
 Description: Lambda to generate pre-signed URLs for S3 uploads.
 
 Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'OPTIONS,POST'"
+        AllowHeaders: "'Content-Type'"
+        AllowOrigin: "'*'"
+
   GeneratePresignedUrlFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -27,8 +36,4 @@ Resources:
           Properties:
             Path: /generate-presigned-url
             Method: POST
-            Cors:
-              AllowMethods: "'OPTIONS,POST'"
-              AllowHeaders: "'Content-Type'"
-              AllowOrigin: "'*'"
-
+            RestApiId: !Ref ApiGateway

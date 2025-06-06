@@ -45,14 +45,10 @@ jobs:
         run: |
           pip install aws-sam-cli
 
-      # Build Lambda with SAM
-      - name: Build Lambda & API Gateway with SAM
-        run: |
-          sam build -t template.yaml
-
-      # Deploy Lambda & API Gateway with SAM
+      # Build Lambda & API Gateway with SAM
       - name: Deploy Lambda & API Gateway with SAM
         run: |
+          sam build -t template.yaml
           sam deploy --stack-name presigned-url-stack \
                       --s3-bucket sam-deploy-bucket-owl-preschool \
                       --region us-east-2 \
