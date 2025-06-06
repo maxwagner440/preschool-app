@@ -28,18 +28,22 @@ export class FileUploadService {
    * @param signedUrl - Pre-signed URL returned from Lambda
    */
   async uploadPdfToS3(pdfBlob: Blob, signedUrl: string): Promise<void> {
-    const response = await fetch(signedUrl, {
-      method: 'PUT',
-      headers: {
+    try{
+      const response = await fetch(signedUrl, {
+        method: 'PUT',
+        headers: {
         'Content-Type': 'application/pdf'
       },
       body: pdfBlob
     });
 
     if (!response.ok) {
-      throw new Error(`Upload failed with status: ${response.status}`);
-    }
+        throw new Error(`Upload failed with status: ${response.status}`);
+      }
 
-    console.log('Upload successful!');
+      console.log('Upload successful!');
+    } catch (error) {
+      console.error('Error uploading PDF to S3:', error);
+    }
   }
 }

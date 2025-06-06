@@ -40,6 +40,22 @@ jobs:
         run: |
           aws s3 sync dist/frontend/browser s3://image-bucket-owl-preschool --delete
 
+      # Update S3 CORS configuration
+      - name: Update S3 CORS configuration
+        run: |
+          aws s3api put-bucket-cors \
+            --bucket image-bucket-owl-preschool \
+            --cors-configuration '{
+              "CORSRules": [
+                {
+                  "AllowedHeaders": ["*"],
+                  "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
+                  "AllowedOrigins": ["https://e3vfz5egai.execute-api.us-east-2.amazonaws.com"],
+                  "ExposeHeaders": []
+                }
+              ]
+            }'
+
       # Install AWS SAM CLI
       - name: Install AWS SAM CLI
         run: |
