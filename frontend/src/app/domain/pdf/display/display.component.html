@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-end bg-dark text-light my-3">
+<!-- <div class="d-flex justify-content-end bg-dark text-light my-3">
   <button class="btn btn-secondary" (click)="downloadOriginalPdf()">Download Manual</button>
 </div>
 <div class="pdf-viewer-container">
@@ -9,6 +9,28 @@
       [fit-to-page]="true" 
       class="pdf-viewer">
     </pdf-viewer>
+  </div> -->
+  <!-- <div class="d-flex justify-content-end bg-dark text-light my-3">
+    <button class="btn btn-secondary" (click)="downloadOriginalPdf()">Download Manual</button>
+  </div> -->
+  <div class="pdf-viewer-container">
+    <ngx-extended-pdf-viewer
+      [src]="pdfUrl"
+      useBrowserLocale="true"
+      [scrollMode]="1"
+      [height]="'75vh'"
+      [(page)]="currentPage"
+      [mobileFriendlyZoom]="isMobile"
+      [spread]="'off'"
+      [zoom]="'page-width'"
+
+    ></ngx-extended-pdf-viewer>
   </div>
-  
+<!-- Optional: bottom pagination bar mimic -->
+<div class="pagination-bar">
+  <button class="btn btn-secondary" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+  <span>Page {{ currentPage }}</span>
+  <button class="btn btn-secondary" (click)="nextPage()">Next</button>
+</div>
+
   <app-document-sign [pdfUrl]="pdfUrl"></app-document-sign>
