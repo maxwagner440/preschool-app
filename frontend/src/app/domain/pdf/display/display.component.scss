@@ -39,18 +39,34 @@
 //   }
 // }
 
-/* Center the viewer container’s inner pages */
-.ngx-extended-pdf-viewer #viewerContainer .pdfViewer {
-  display: flex;
-  justify-content: center;
+// .ngx-extended-pdf-viewer {
+//   border: 2px solid #ddd; /* light grey border */
+//   border-radius: 8px;     /* round the corners */
+//   overflow: hidden;       /* ensure content stays inside the border */
+// }
+::ng-deep ngx-extended-pdf-viewer #outerContainer {
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.ngx-extended-pdf-viewer #viewerContainer {
-  overflow-x: auto;
+::ng-deep ngx-extended-pdf-viewer .body {
+  border-radius: 12px !important;
 }
+
+// /* Center the viewer container’s inner pages */
+// .ngx-extended-pdf-viewer #viewerContainer .pdfViewer {
+//   display: flex;
+//   justify-content: center;
+// }
+
+// .ngx-extended-pdf-viewer #viewerContainer {
+//   overflow-x: auto;
+// }
 
 .pagination-bar {
   display: flex;
+  align-items: center;
   justify-content: center;
   margin-top: 10px;
 }

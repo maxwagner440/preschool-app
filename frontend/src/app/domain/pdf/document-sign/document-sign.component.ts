@@ -1,11 +1,12 @@
-import { Component, ElementRef, input, ViewChild } from '@angular/core';
+import { Component, ElementRef, input, output,  ViewChild } from '@angular/core';
 import SignaturePad from 'signature_pad';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument, PDFImage, rgb, StandardFonts } from 'pdf-lib';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FileUploadService } from '../file-upload.service';
 import { Subscription } from 'rxjs';
 // import { ToastrModule, ToastrService } from 'ngx-toastr';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-document-sign',
@@ -15,7 +16,13 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule, FormsModule]
 })
 export class DocumentSignComponent {
+  pdfUrl = input.required<string>();
+  signedPdfBlobUrl = output<string>();
+  parentOneImage: PDFImage | null = null;
+  parentTwoImage: PDFImage | null = null;
   @ViewChild('signaturePad', { static: false }) signaturePadElement!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('errorToast', { static: true }) errorToast!: ElementRef;
+
   signaturePad!: SignaturePad;
 
   showSignModal = false;
@@ -25,17 +32,15 @@ export class DocumentSignComponent {
   signaturePad1!: string;
   signaturePad2!: string;
 
-  pdfUrl = input.required<string>();
+  parentFormFirstName: string = '';
+  parentFormLastName: string = '';
 
-  parentFirstName: string = '';
-  parentLastName: string = '';
-
-  parent1Name: string = '';
-  parent1Title: string = '';
-  parent2Name: string = '';
-  parent2Title: string = '';
+  parentOneFirstName: string = '';
+  parentOneLastName: string = '';
+  parentTwoFirstName: string = '';
+  parentTwoLastName: string = '';
+  
   signaturePadError: boolean = false;
-  // currentDate: string = new Date().toLocaleDateString();
 
   latestPdfBlob: Blob | null = null;
 
@@ -45,22 +50,24 @@ showErrorToast = false;
 
   constructor(private _fileUploadService: FileUploadService) {}
 
+  //TODO: When save, lets add signatures to document 
+  //TODO: Have button saying "Send to School" or something
 
-showToast(type: 'success' | 'error') {
-  if (type === 'success') {
+
+  triggerSuccessToast() {
     this.showSuccessToast = true;
-  } else {
-    this.showErrorToast = true;
+    // setTimeout(() => this.showSuccessToast = false, 3000);
   }
 
-  // Auto-hide after 3 seconds
-  setTimeout(() => this.hideToast(), 3000);
-}
+  triggerErrorToast() {
+    const toastInstance = new bootstrap.Toast(this.errorToast.nativeElement, { autohide: true, delay: 3000 });
+    toastInstance.show();
+  }
 
-hideToast() {
-  this.showSuccessToast = false;
-  this.showErrorToast = false;
-}
+  hideToast() {
+    this.showSuccessToast = false;
+    this.showErrorToast = false;
+  }
 
   openSignModal(number: number) {
     this.signingParent = number;
@@ -71,8 +78,8 @@ hideToast() {
   
   closeSignModal() {
     this.showSignModal = false;
-    this.parentFirstName = '';
-    this.parentLastName = '';
+    this.parentFormFirstName = '';
+    this.parentFormLastName = '';
     this.signaturePadError = false;
   }
 
@@ -121,49 +128,48 @@ hideToast() {
     this.clearSignature();
     this.signaturePad1 = '';
     this.signaturePad2 = '';
-    this.parentFirstName = '';
-    this.parentLastName = '';
+    this.parentFormFirstName = '';
+    this.parentFormLastName = '';
   }
-
 
   sendPdfToS3(blob: Blob): void {
     try {
     this.subscription.add(
       this._fileUploadService.getPresignedUrl(
-        `${this.parent1Name}-${this.parent2Name}.pdf`,
+        `${this.parentOneFirstName}-${this.parentOneLastName}-${this.parentTwoFirstName}-${this.parentTwoLastName}.pdf`,
         'application/pdf'
       ).subscribe({
         next: async (response) => {
-          console.log(response);
-          console.log("Now uploading to S3")
-          const result = await this._fileUploadService.uploadPdfToS3(blob, response.signedUrl);
-
-          this.clearAll();
-
-          this.showToast('success');
+          try {
+            await this._fileUploadService.uploadPdfToS3(blob, response.signedUrl);
+            this.clearAll();
+            this.triggerSuccessToast();
+          } catch (error) {
+            this.triggerErrorToast();
+            console.error('Error uploading PDF to S3:', error);
+          }
         },
         error: (error) => {
-          this.showToast('error');
+          this.triggerErrorToast();
           console.error('Error uploading PDF to S3:', error);
         }
       })
     );
   } catch (error) {
     console.error('Error uploading PDF to S3:', error);
-    this.showToast('error');
+    this.triggerErrorToast();
   }
 }
 
+  onSignatureComplete(signedPdfBlob: Blob) {
+    this.signedPdfBlobUrl.emit(URL.createObjectURL(signedPdfBlob));
+    this.latestPdfBlob = signedPdfBlob;
+  }
+
   async saveSignatures() {
-    
-    if(this.signaturePad1 && this.signaturePad2) {
-      this.createPdf().then(blob => {
-        this.latestPdfBlob = blob;
-        this.sendPdfToS3(blob);
-      });
+    if(this.latestPdfBlob) {
+      this.sendPdfToS3(this.latestPdfBlob);
     }
-   
-    // this.sendPdfToS3(blob); 
   }
 
 
@@ -180,8 +186,8 @@ hideToast() {
   saveSignature() {
     if (
           this.signaturePad.isEmpty() ||
-          !this.parentFirstName ||
-          !this.parentLastName
+          !this.parentFormFirstName ||
+          !this.parentFormLastName
         ) {
           this.signaturePadError = true;
           return;
@@ -191,90 +197,55 @@ hideToast() {
       
     if (this.signingParent === 1) {
       this.signaturePad1 = this.signaturePad.toDataURL();
+      this.parentOneFirstName = this.parentFormFirstName;
+      this.parentOneLastName = this.parentFormLastName;
+      this.addSignaturesToPdf(this.signaturePad1, 1, this.parentFormFirstName, this.parentFormLastName);
+
     } else {
       this.signaturePad2 = this.signaturePad.toDataURL();
+      this.addSignaturesToPdf(this.signaturePad2, 2, this.parentFormFirstName, this.parentFormLastName);
     }
 
+    this.parentFormFirstName = '';
+    this.parentFormLastName = '';
     this.showSignModal = false;
-
-    // if(this.signaturePad1 && this.signaturePad2) {
-    //   this.createPdf().then(blob => {
-    //     this.latestPdfBlob = blob;
-    //     this.sendPdfToS3(blob);
-    //   });
-    // }
   }
 
-  private async createPdf(): Promise<Blob> {
-    const signature1DataUrl = this.signaturePad1;
-    const signature2DataUrl = this.signaturePad2;
+  async addSignaturesToPdf(signatPadString:string, parentNumber: number, parentFirstName: string, parentLastName: string) {
     const pdfBytes = await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
     const pdfDoc = await PDFDocument.load(pdfBytes);
 
-    const parent1SignatureBytes = await fetch(signature1DataUrl).then(res => res.arrayBuffer());
-    const parent2SignatureBytes = await fetch(signature2DataUrl).then(res => res.arrayBuffer());
-    const parent1Image = await pdfDoc.embedPng(parent1SignatureBytes);
-    const parent2Image = await pdfDoc.embedPng(parent2SignatureBytes);
+    const parentSignatureBytes = await fetch(signatPadString).then(res => res.arrayBuffer());
+    const parentImage = await pdfDoc.embedPng(parentSignatureBytes);
+
+    if(parentNumber === 1) {  
+      this.parentOneImage = parentImage;
+    } else {
+      this.parentTwoImage = parentImage;  
+    }
 
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const pages = pdfDoc.getPages();
     const lastPage = pages[pages.length - 1];
 
-    // Parent 1
-    lastPage.drawText(`Parent 1: ${this.parent1Name}`, {
+    lastPage.drawText(`Parent ${this.signingParent}: ${parentFirstName} ${parentLastName}`, {
       x: 50,
-      y: 200,
+      y: parentNumber === 1 ? 200 : 100,
       size: 12,
       font,
       color: rgb(0, 0, 0)
     });
-    lastPage.drawText(`Title: ${this.parent1Title}`, {
-      x: 50,
-      y: 185,
-      size: 10,
-      font,
-      color: rgb(0, 0, 0)
-    });
-    lastPage.drawImage(parent1Image, {
+   
+    lastPage.drawImage(parentImage, {
       x: 250,
-      y: 190,
+      y: parentNumber === 1 ? 190 : 90,
       width: 150,
       height: 30
-    });
-
-    // Parent 2
-    lastPage.drawText(`Parent 2: ${this.parent2Name}`, {
-      x: 50,
-      y: 100,
-      size: 12,
-      font,
-      color: rgb(0, 0, 0)
-    });
-    lastPage.drawText(`Title: ${this.parent2Title}`, {
-      x: 50,
-      y: 85,
-      size: 10,
-      font,
-      color: rgb(0, 0, 0)
-    });
-    lastPage.drawImage(parent2Image, {
-      x: 250,
-      y: 90,
-      width: 150,
-      height: 30
-    });
-
-    // Date
-    lastPage.drawText(`Date: ${new Date().toLocaleDateString()}`, {
-      x: 50,
-      y: 50,
-      size: 12,
-      font,
-      color: rgb(0, 0, 0)
     });
 
     const signedPdfBytes = await pdfDoc.save();
     const blob = new Blob([new Uint8Array(signedPdfBytes)], { type: 'application/pdf' });
-    return blob;
+    this.onSignatureComplete(blob);
   }
+
 }

@@ -15,22 +15,40 @@
   </div> -->
   <div class="pdf-viewer-container">
     <ngx-extended-pdf-viewer
-      [src]="pdfUrl"
+      [src]="currentPdfUrl"
       useBrowserLocale="true"
       [scrollMode]="1"
-      [height]="'75vh'"
+      [height]="height"
       [(page)]="currentPage"
       [mobileFriendlyZoom]="isMobile"
       [spread]="'off'"
       [zoom]="'page-width'"
+      [showSidebarButton]="false"
+      [showFindButton]="true"
+      [showPagingButtons]="false"
+      [showZoomButtons]="true"
+      [showPresentationModeButton]="false"
+      [showOpenFileButton]="false"
+      [showPrintButton]="false"
+      [showDownloadButton]="true"
+      showBookmarkButton="false"
+      [showSecondaryToolbarButton]="true"
 
+      (pageChange)="onPageChange($event)"
+      (pagesLoaded)="onPagesLoaded($event)"
     ></ngx-extended-pdf-viewer>
   </div>
 <!-- Optional: bottom pagination bar mimic -->
 <div class="pagination-bar">
-  <button class="btn btn-secondary" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+  <button class="btn btn-secondary" (click)="previousPage()" [disabled]="disablePrevious" >
+    <i class="bi bi-chevron-left" ></i>
+  </button>
+  <!-- <button class="btn btn-secondary" (click)="previousPage()" [disabled]="disablePrevious" >Previous</button> -->
   <span>Page {{ currentPage }}</span>
-  <button class="btn btn-secondary" (click)="nextPage()">Next</button>
+  <!-- <button class="btn btn-secondary" (click)="nextPage()" [disabled]="disableNext">Next</button> -->
+  <button class="btn btn-secondary" (click)="nextPage()" [disabled]="disableNext" >
+    <i class="bi bi-chevron-right" ></i>
+  </button>
 </div>
 
-  <app-document-sign [pdfUrl]="pdfUrl"></app-document-sign>
+  <app-document-sign [pdfUrl]="currentPdfUrl" (signedPdfBlobUrl)="onSignedPdfBlobUrl($event)"></app-document-sign>
