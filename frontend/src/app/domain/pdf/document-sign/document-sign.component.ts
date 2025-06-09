@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, output,  ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, input, output,  ViewChild } from '@angular/core';
 import SignaturePad from 'signature_pad';
 import { PDFDocument, PDFImage, rgb, StandardFonts } from 'pdf-lib';
 import { CommonModule } from '@angular/common';
@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { FileUploadService } from '../file-upload.service';
 import { Subscription } from 'rxjs';
 // import { ToastrModule, ToastrService } from 'ngx-toastr';
-declare var bootstrap: any;
 
 @Component({
   selector: 'app-document-sign',
@@ -47,8 +46,8 @@ export class DocumentSignComponent {
   showSuccessToast = false;
 showErrorToast = false;
   subscription = new Subscription();
-
-  constructor(private _fileUploadService: FileUploadService) {}
+  saving = false;
+  constructor(private _fileUploadService: FileUploadService, private cdr: ChangeDetectorRef) {}
 
   //TODO: When save, lets add signatures to document 
   //TODO: Have button saying "Send to School" or something
@@ -56,12 +55,12 @@ showErrorToast = false;
 
   triggerSuccessToast() {
     this.showSuccessToast = true;
-    // setTimeout(() => this.showSuccessToast = false, 3000);
+    this.cdr.detectChanges();
   }
 
   triggerErrorToast() {
-    const toastInstance = new bootstrap.Toast(this.errorToast.nativeElement, { autohide: true, delay: 3000 });
-    toastInstance.show();
+    this.showErrorToast = true;
+    this.cdr.detectChanges();
   }
 
   hideToast() {
@@ -134,31 +133,40 @@ showErrorToast = false;
 
   sendPdfToS3(blob: Blob): void {
     try {
-    this.subscription.add(
-      this._fileUploadService.getPresignedUrl(
-        `${this.parentOneFirstName}-${this.parentOneLastName}-${this.parentTwoFirstName}-${this.parentTwoLastName}.pdf`,
-        'application/pdf'
-      ).subscribe({
-        next: async (response) => {
-          try {
-            await this._fileUploadService.uploadPdfToS3(blob, response.signedUrl);
-            this.clearAll();
-            this.triggerSuccessToast();
-          } catch (error) {
+      this.saving = true;
+      this.subscription.add(
+        this._fileUploadService.getPresignedUrl(
+          `${this.parentOneFirstName}-${this.parentOneLastName}-${this.parentTwoFirstName}-${this.parentTwoLastName}.pdf`,
+          'application/pdf'
+        ).subscribe({
+          next: async (response) => {
+            try {
+              await this._fileUploadService.uploadPdfToS3(blob, response.signedUrl);
+              this.clearAll();
+              this.triggerSuccessToast();
+              this.saving = false;
+              this.cdr.detectChanges();
+            } catch (error) {
+              this.saving = false;
+              this.triggerErrorToast();
+              console.error('Error uploading PDF to S3:', error);
+              this.cdr.detectChanges();
+            }
+          },
+          error: (error) => {
+            this.saving = false;
             this.triggerErrorToast();
             console.error('Error uploading PDF to S3:', error);
+            this.cdr.detectChanges();
           }
-        },
-        error: (error) => {
-          this.triggerErrorToast();
-          console.error('Error uploading PDF to S3:', error);
-        }
-      })
-    );
-  } catch (error) {
-    console.error('Error uploading PDF to S3:', error);
-    this.triggerErrorToast();
-  }
+        })
+      );
+    } catch (error) {
+      this.saving = false;
+      console.error('Error uploading PDF to S3:', error);
+      this.triggerErrorToast();
+      this.cdr.detectChanges();
+    }
 }
 
   onSignatureComplete(signedPdfBlob: Blob) {
