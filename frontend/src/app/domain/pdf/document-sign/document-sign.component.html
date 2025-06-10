@@ -6,7 +6,7 @@
 
   <div
     class="signature-preview"
-    [ngClass]="{ 'has-signature': !!signaturePad1 }"
+    [ngClass]="{ 'has-signature': !!signaturePad1, 'disabled': !enabled() }"
     (click)="openSignModal(1)"
   >
     <img *ngIf="signaturePad1" [src]="signaturePad1" alt="Parent 1 Signature" />
@@ -15,7 +15,7 @@
 
   <div
     class="signature-preview"
-    [ngClass]="{ 'has-signature': !!signaturePad2 }"
+    [ngClass]="{ 'has-signature': !!signaturePad2, 'disabled': !enabled() }"
     (click)="openSignModal(2)"
   >
     <img *ngIf="signaturePad2" [src]="signaturePad2" alt="Parent 2 Signature" />
@@ -25,7 +25,7 @@
   <hr class="my-4 line" />
 
   <div class="d-flex justify-content-end">
-    <button class="btn btn-primary" [disabled]="(!signaturePad1 && !signaturePad2) || saving"  (click)="saveSignatures()">
+    <button class="btn btn-primary" [ngClass]="{ 'disabled': (!signaturePad1 && !signaturePad2) }" [disabled]="(!signaturePad1 && !signaturePad2) || saving"  (click)="saveSignatures()">
       {{ saving ? 'Saving...' : 'Save Document' }} <span
       *ngIf="saving"
       class="spinner-border spinner-border-sm me-2"
@@ -65,7 +65,7 @@
         <p class="text-danger">Please provide both signatures and names.</p>
       </div>
       <button class="btn btn-secondary me-2" (click)="clearSignature()">Clear</button>
-      <button class="btn btn-primary" (click)="saveSignature()">Save Signature</button>
+      <button class="btn btn-primary" [disabled]="!this.parentFormFirstName ||!this.parentFormLastName"  (click)="saveSignature()">Save Signature</button>
     </div>
   </div>
 </ng-template>

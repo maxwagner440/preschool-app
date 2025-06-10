@@ -60,4 +60,4 @@
   </button>
 </div>
 <hr class="my-4" />
-<app-document-sign class="signature-section" [pdfUrl]="currentPdfUrl" (signedPdfBlobUrl)="onSignedPdfBlobUrl($event)"></app-document-sign>
+<app-document-sign class="signature-section" [enabled]="canSign()" [pdfUrl]="currentPdfUrl" (signedPdfBlobUrl)="onSignedPdfBlobUrl($event)"></app-document-sign>

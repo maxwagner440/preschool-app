@@ -15,6 +15,8 @@ import { Subscription } from 'rxjs';
 })
 export class DocumentSignComponent {
   pdfUrl = input.required<string>();
+  enabled = input<boolean>(false);
+
   signedPdfBlobUrl = output<string>();
   
   @ViewChild('signaturePad', { static: false }) signaturePadElement!: ElementRef<HTMLCanvasElement>;
@@ -70,9 +72,11 @@ export class DocumentSignComponent {
   }
 
   openSignModal(number: number) {
-    this.signingParent = number;
-    this.showSignModal = true;
-    this.initialized = false; // reset for re-initialization
+    if(this.enabled()) {
+      this.signingParent = number;
+      this.showSignModal = true;
+      this.initialized = false; // reset for re-initialization
+    }
   }
   
   closeSignModal() {

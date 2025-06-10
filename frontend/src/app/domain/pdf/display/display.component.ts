@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { DocumentSignComponent } from '../document-sign/document-sign.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -23,7 +23,8 @@ export class DisplayComponent {
   disablePrevious = false;
   disableNext = false;
   signedPdfBlobUrl: string | null = null;
-  
+  canSign = signal(false);
+
   onPagesLoaded(event: any) {
     this.totalPages = event.pagesCount || 0;
   }
@@ -34,16 +35,28 @@ export class DisplayComponent {
     }
     this.disablePagination(this.currentPage);
   }
+
+  enableSignatureSection() {
+    const element = document.querySelector('.signature-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
   
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
     }
+
     this.disablePagination(this.currentPage);
   }
 
   onPageChange(pageNumber: number) {
+    if(this.currentPage === this.totalPages) {
+      this.canSign.set(true);
+    }
     this.currentPage = pageNumber;
+    
     this.disablePagination(this.currentPage);
   }
 
