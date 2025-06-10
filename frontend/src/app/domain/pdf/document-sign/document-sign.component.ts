@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FileUploadService } from '../file-upload.service';
 import { Subscription } from 'rxjs';
-// import { ToastrModule, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-document-sign',
@@ -17,10 +16,12 @@ import { Subscription } from 'rxjs';
 export class DocumentSignComponent {
   pdfUrl = input.required<string>();
   signedPdfBlobUrl = output<string>();
-  parentOneImage: PDFImage | null = null;
-  parentTwoImage: PDFImage | null = null;
+  
   @ViewChild('signaturePad', { static: false }) signaturePadElement!: ElementRef<HTMLCanvasElement>;
   @ViewChild('errorToast', { static: true }) errorToast!: ElementRef;
+
+  parentOneImage: PDFImage | null = null;
+  parentTwoImage: PDFImage | null = null;
 
   signaturePad!: SignaturePad;
 
@@ -44,7 +45,7 @@ export class DocumentSignComponent {
   latestPdfBlob: Blob | null = null;
 
   showSuccessToast = false;
-showErrorToast = false;
+  showErrorToast = false;
   subscription = new Subscription();
   saving = false;
   constructor(private _fileUploadService: FileUploadService, private cdr: ChangeDetectorRef) {}
@@ -72,7 +73,6 @@ showErrorToast = false;
     this.signingParent = number;
     this.showSignModal = true;
     this.initialized = false; // reset for re-initialization
-   
   }
   
   closeSignModal() {

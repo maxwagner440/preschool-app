@@ -46,12 +46,12 @@
 // }
 ::ng-deep ngx-extended-pdf-viewer #outerContainer {
   border: 2px solid #ddd;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 ::ng-deep ngx-extended-pdf-viewer .body {
-  border-radius: 12px !important;
+  border-radius: 10px !important;
 }
 
 // /* Center the viewer container’s inner pages */
@@ -64,15 +64,21 @@
 //   overflow-x: auto;
 // }
 
+.font-size-15 {
+  font-size: 18px;
+}
+
 .pagination-bar {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
+  margin: 1.5rem 0;
+  // color: black;
+
 }
 
 .pagination-bar button {
-  margin: 0 10px;
+  margin: 0 15px;
 }
 
 // .pdf-viewer-container pdf-viewer {

@@ -20,7 +20,6 @@
       [scrollMode]="1"
       [height]="height"
       [(page)]="currentPage"
-      [mobileFriendlyZoom]="isMobile"
       [spread]="'off'"
       [zoom]="'page-width'"
       [showSidebarButton]="false"
@@ -33,7 +32,6 @@
       [showDownloadButton]="true"
       showBookmarkButton="false"
       [showSecondaryToolbarButton]="true"
-
       (pageChange)="onPageChange($event)"
       (pagesLoaded)="onPagesLoaded($event)"
     ></ngx-extended-pdf-viewer>
@@ -41,14 +39,14 @@
 <!-- Optional: bottom pagination bar mimic -->
 <div class="pagination-bar">
   <button class="btn btn-secondary" (click)="previousPage()" [disabled]="disablePrevious" >
-    <i class="bi bi-chevron-left" ></i>
+    <i class="bi bi-chevron-left font-size-15" ></i>
   </button>
   <!-- <button class="btn btn-secondary" (click)="previousPage()" [disabled]="disablePrevious" >Previous</button> -->
   <span>Page {{ currentPage }}</span>
   <!-- <button class="btn btn-secondary" (click)="nextPage()" [disabled]="disableNext">Next</button> -->
   <button class="btn btn-secondary" (click)="nextPage()" [disabled]="disableNext" >
-    <i class="bi bi-chevron-right" ></i>
+    <i class="bi bi-chevron-right font-size-15" ></i>
   </button>
 </div>
-
-  <app-document-sign [pdfUrl]="currentPdfUrl" (signedPdfBlobUrl)="onSignedPdfBlobUrl($event)"></app-document-sign>
+<hr class="my-4" />
+<app-document-sign [pdfUrl]="currentPdfUrl" (signedPdfBlobUrl)="onSignedPdfBlobUrl($event)"></app-document-sign>
