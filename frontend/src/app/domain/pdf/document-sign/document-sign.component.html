@@ -25,6 +25,7 @@
   <hr class="my-4 line" />
 
   <div class="d-flex justify-content-end">
+    <button class="btn btn-secondary me-2" (click)="clearAll()"> Clear All</button>
     <button class="btn btn-primary" [ngClass]="{ 'disabled': (!signaturePad1 && !signaturePad2) }" [disabled]="(!signaturePad1 && !signaturePad2) || saving"  (click)="saveSignatures()">
       {{ saving ? 'Saving...' : 'Save Document' }} <span
       *ngIf="saving"
@@ -32,6 +33,43 @@
       role="status"
       aria-hidden="true"
     ></span></button>
+  </div>
+  <!-- <div class="dropdown my-2">
+    <button
+      class="btn btn-outline-secondary dropdown-toggle w-100"
+      type="button"
+      id="dropdownMenuButton"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      Download Options
+    </button>
+    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
+      <li>
+        <a class="dropdown-item" href="#" (click)="downloadOriginalPdf()">Download Original Document</a>
+      </li>
+      <li *ngIf="latestPdfBlob" >
+        <a
+          class="dropdown-item"
+          href="#"
+          (click)="latestPdfBlob && downloadSignedPdf()"
+        >
+          Download Signed Document
+        </a>
+      </li>
+    </ul>
+  </div> -->
+  <div class="download-buttons d-flex gap-2 my-3">
+    <button class="btn btn-outline-primary" (click)="downloadOriginalPdf()">
+      <i class="bi bi-download me-2"></i> Download Original Document
+    </button>
+    <button
+      class="btn btn-outline-success"
+      [disabled]="!latestPdfBlob"
+      (click)="downloadSignedPdf()"
+    >
+      <i class="bi bi-download me-2"></i> Download Signed Document
+    </button>
   </div>
 </div>
 

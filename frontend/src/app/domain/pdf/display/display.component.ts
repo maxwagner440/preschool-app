@@ -47,6 +47,9 @@ export class DisplayComponent {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
     }
+    if(this.currentPage === this.totalPages) {
+      this.canSign.set(true);
+    }
 
     this.disablePagination(this.currentPage);
   }

@@ -119,6 +119,23 @@
   // border: 2px dashed #535353 !important;
 }
 
+.download-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.download-buttons button {
+  flex: 1 1 auto; /* Make buttons grow evenly */
+}
+
+@media (max-width: 600px) {
+  .download-buttons {
+    flex-direction: column;
+  }
+}
+
+
 // .mini-signature-button {
 //   border: 2px dashed #999;
 //   width: 8.5rem;

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, input, output,  ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, input, output,  ViewChild, OnInit } from '@angular/core';
 import SignaturePad from 'signature_pad';
 import { PDFDocument, PDFImage, rgb, StandardFonts } from 'pdf-lib';
 import { CommonModule } from '@angular/common';
@@ -13,12 +13,15 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./document-sign.component.scss'],
   imports: [CommonModule, FormsModule]
 })
-export class DocumentSignComponent {
+export class DocumentSignComponent implements OnInit {
   pdfUrl = input.required<string>();
   enabled = input<boolean>(false);
+  baseFileName = input<string>('ParentManual25-26');
 
   signedPdfBlobUrl = output<string>();
-  
+
+  originalPdfUrl!: string;
+
   @ViewChild('signaturePad', { static: false }) signaturePadElement!: ElementRef<HTMLCanvasElement>;
   @ViewChild('errorToast', { static: true }) errorToast!: ElementRef;
 
@@ -50,11 +53,12 @@ export class DocumentSignComponent {
   showErrorToast = false;
   subscription = new Subscription();
   saving = false;
-  constructor(private _fileUploadService: FileUploadService, private cdr: ChangeDetectorRef) {}
+  constructor(private _fileUploadService: FileUploadService, private cdr: ChangeDetectorRef) {
+  }
 
-  //TODO: When save, lets add signatures to document 
-  //TODO: Have button saying "Send to School" or something
-
+  ngOnInit() {
+    this.originalPdfUrl = this.pdfUrl();
+  }
 
   triggerSuccessToast() {
     this.showSuccessToast = true;
@@ -124,7 +128,9 @@ export class DocumentSignComponent {
   }
 
   clearSignature() {
-    this.signaturePad.clear();
+    if(this.signaturePad) {
+      this.signaturePad.clear();
+    }
   }
 
   clearAll() {
@@ -133,6 +139,25 @@ export class DocumentSignComponent {
     this.signaturePad2 = '';
     this.parentFormFirstName = '';
     this.parentFormLastName = '';
+    this.parentOneFirstName = '';
+    this.parentOneLastName = '';
+    this.parentTwoFirstName = '';
+    this.parentTwoLastName = '';
+    this.signedPdfBlobUrl.emit(this.originalPdfUrl);
+
+  }
+
+  getFileName(parentName: string) {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    const filenameDate = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+    return `${parentName}-${this.baseFileName()}-${filenameDate}.pdf`;
   }
 
   sendPdfToS3(blob: Blob): void {
@@ -140,7 +165,7 @@ export class DocumentSignComponent {
       this.saving = true;
       this.subscription.add(
         this._fileUploadService.getPresignedUrl(
-          `${this.parentOneFirstName}-${this.parentOneLastName}-${this.parentTwoFirstName}-${this.parentTwoLastName}.pdf`,
+          this.getFileName(this.parentOneLastName),
           'application/pdf'
         ).subscribe({
           next: async (response) => {
@@ -184,28 +209,29 @@ export class DocumentSignComponent {
     }
   }
 
-
   downloadSignedPdf() {
     if (this.latestPdfBlob) {
       const url = URL.createObjectURL(this.latestPdfBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'signed-document.pdf';  
+      link.download = this.getFileName(this.parentOneLastName);  
       link.click();
     }
   }
 
+  downloadOriginalPdf() {
+    const link = document.createElement('a');
+    link.href = this.originalPdfUrl;
+    link.download = this.baseFileName() + '.pdf';
+    link.click();
+  }
+
   saveSignature() {
-    if (
-          this.signaturePad.isEmpty() ||
-          !this.parentFormFirstName ||
-          !this.parentFormLastName
-        ) {
-          this.signaturePadError = true;
-          return;
-        } else {
-          this.signaturePadError = false;
-        }
+    this.signaturePadError = (
+      this.signaturePad.isEmpty() ||
+      !this.parentFormFirstName ||
+      !this.parentFormLastName
+    );
       
     if (this.signingParent === 1) {
       this.signaturePad1 = this.signaturePad.toDataURL();
@@ -223,41 +249,115 @@ export class DocumentSignComponent {
     this.showSignModal = false;
   }
 
-  async addSignaturesToPdf(signatPadString:string, parentNumber: number, parentFirstName: string, parentLastName: string) {
-    const pdfBytes = await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+  // async addSignaturesToPdf(signatPadString:string, parentNumber: number, parentFirstName: string, parentLastName: string) {
+  //   const pdfBytes = await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
+  //   const pdfDoc = await PDFDocument.load(pdfBytes);
 
+  //   const parentSignatureBytes = await fetch(signatPadString).then(res => res.arrayBuffer());
+  //   const parentImage = await pdfDoc.embedPng(parentSignatureBytes);
+
+  //   if(parentNumber === 1) {  
+  //     this.parentOneImage = parentImage;
+  //   } else {
+  //     this.parentTwoImage = parentImage;  
+  //   }
+
+  //   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  //   const pages = pdfDoc.getPages();
+  //   const lastPage = pages[pages.length - 1];
+
+  //   lastPage.drawText(`Parent ${this.signingParent}: ${parentFirstName} ${parentLastName}`, {
+  //     x: 50,
+  //     y: parentNumber === 1 ? 200 : 100,
+  //     size: 12,
+  //     font,
+  //     color: rgb(0, 0, 0)
+  //   });
+   
+  //   lastPage.drawImage(parentImage, {
+  //     x: 250,
+  //     y: parentNumber === 1 ? 190 : 90,
+  //     width: 150,
+  //     height: 30
+  //   });
+
+  //   const signedPdfBytes = await pdfDoc.save();
+  //   const blob = new Blob([new Uint8Array(signedPdfBytes)], { type: 'application/pdf' });
+  //   this.onSignatureComplete(blob);
+  // }
+
+  async addSignaturesToPdf(
+    signatPadString: string,
+    parentNumber: number,
+    parentFirstName: string,
+    parentLastName: string
+  ) {
+    const pdfBytes = this.latestPdfBlob
+      ? await this.latestPdfBlob.arrayBuffer()
+      : await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+  
     const parentSignatureBytes = await fetch(signatPadString).then(res => res.arrayBuffer());
     const parentImage = await pdfDoc.embedPng(parentSignatureBytes);
-
-    if(parentNumber === 1) {  
-      this.parentOneImage = parentImage;
-    } else {
-      this.parentTwoImage = parentImage;  
-    }
-
+  
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const pages = pdfDoc.getPages();
     const lastPage = pages[pages.length - 1];
-
-    lastPage.drawText(`Parent ${this.signingParent}: ${parentFirstName} ${parentLastName}`, {
+  
+    const baseY = parentNumber === 1 ? 200 : 100;
+    const lineY = baseY;
+    const nameY = baseY + 20;
+    const signatureY = baseY - 10;
+  
+    // Step 1: "Erase" the old signature area
+    lastPage.drawRectangle({
+      x: 45, // slightly larger than the signature area to fully cover it
+      y: baseY - 15,
+      width: 400,
+      height: 60,
+      color: rgb(1, 1, 1), // white rectangle to cover old content
+    });
+  
+    // Step 2: Draw name
+    lastPage.drawText(`${parentFirstName} ${parentLastName}`, {
       x: 50,
-      y: parentNumber === 1 ? 200 : 100,
+      y: nameY,
       size: 12,
       font,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
-   
+  
+    // Step 3: Draw line
+    lastPage.drawLine({
+      start: { x: 50, y: lineY },
+      end: { x: 400, y: lineY },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    });
+  
+    // Step 4: Draw signature
     lastPage.drawImage(parentImage, {
-      x: 250,
-      y: parentNumber === 1 ? 190 : 90,
+      x: 150,
+      y: signatureY,
       width: 150,
-      height: 30
+      height: 30,
     });
-
+  
+    // Step 5: Draw date
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString();
+    lastPage.drawText(formattedDate, {
+      x: 420,
+      y: nameY,
+      size: 10,
+      font,
+      color: rgb(0, 0, 0),
+    });
+  
     const signedPdfBytes = await pdfDoc.save();
     const blob = new Blob([new Uint8Array(signedPdfBytes)], { type: 'application/pdf' });
     this.onSignatureComplete(blob);
   }
+  
 
 }
