@@ -35,6 +35,17 @@
       (pageChange)="onPageChange($event)"
       (pagesLoaded)="onPagesLoaded($event)"
     ></ngx-extended-pdf-viewer>
+     <!-- Overlay only visible when at last page -->
+      <div
+      class="pdf-overlay"
+      *ngIf="currentPage === totalPages"
+      (click)="scrollToSignatureSection()"
+    >
+      <div class="overlay-content">
+        <p>Scroll down to sign</p>
+        <i class="bi bi-chevron-down"></i> <!-- Bootstrap icon -->
+      </div>
+    </div>
   </div>
 <!-- Optional: bottom pagination bar mimic -->
 <div class="pagination-bar">
@@ -49,4 +60,4 @@
   </button>
 </div>
 <hr class="my-4" />
-<app-document-sign [pdfUrl]="currentPdfUrl" (signedPdfBlobUrl)="onSignedPdfBlobUrl($event)"></app-document-sign>
+<app-document-sign class="signature-section" [pdfUrl]="currentPdfUrl" (signedPdfBlobUrl)="onSignedPdfBlobUrl($event)"></app-document-sign>

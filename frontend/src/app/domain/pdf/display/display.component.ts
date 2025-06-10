@@ -52,13 +52,12 @@ export class DisplayComponent {
     this.disableNext = currentPage === this.totalPages;
   }
 
-  // downloadOriginalPdf() {
-  //     const link = document.createElement('a');
-  //     link.href = this.pdfUrl; // or your actual static URL
-  //     link.download = 'ParentManual25-26.pdf'; // desired filename
-  //     link.target = '_blank'; // optional: opens in new tab (helpful for some browsers)
-  //     link.click();
-  // }
+  scrollToSignatureSection() {
+    const element = document.querySelector('.signature-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
 
   onSignedPdfBlobUrl(signedPdfBlobUrl: string) {
     this.signedPdfBlobUrl = signedPdfBlobUrl;
