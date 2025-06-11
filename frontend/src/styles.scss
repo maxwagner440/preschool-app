@@ -3,8 +3,13 @@
 
 :root {
   color-scheme: light dark;
-  --bs-body-bg: #212529;
+  --bs-body-bg: #185767;
+  // --bs-body-bg: #18576700;
   --bs-body-color: #f8f9fa;
+}
+
+.bg-dark {
+  background-color: #185767 !important; 
 }
 
 html, body {
