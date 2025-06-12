@@ -38,19 +38,19 @@ jobs:
       # Deploy Angular app to S3 using AWS CLI
       - name: Deploy Angular frontend to S3
         run: |
-          aws s3 sync dist/frontend/browser s3://image-bucket-owl-preschool --delete
+          aws s3 sync dist/frontend/browser s3://owl-preschool-host --delete
 
       # Update S3 CORS configuration
       - name: Update S3 CORS configuration
         run: |
           aws s3api put-bucket-cors \
-            --bucket image-bucket-owl-preschool \
+            --bucket owl-preschool-host \
             --cors-configuration '{
               "CORSRules": [
                 {
                   "AllowedHeaders": ["*"],
                   "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
-                  "AllowedOrigins": ["http://image-bucket-owl-preschool.s3-website.us-east-2.amazonaws.com"],
+                  "AllowedOrigins": ["http://owl-preschool-host.s3-website.us-east-2.amazonaws.com"],
                   "ExposeHeaders": []
                 }
               ]
