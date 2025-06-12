@@ -55,11 +55,28 @@ jobs:
                 }
               ]
             }'
+      
+      # Ensure image bucket exists (but don't modify uploads/)
+      - name: Ensure image-bucket-owl-preschool bucket exists
+        run: |
+          if ! aws s3api head-bucket --bucket image-bucket-owl-preschool 2>/dev/null; then
+            echo "Bucket does not exist. Creating..."
+            aws s3api create-bucket \
+              --bucket image-bucket-owl-preschool \
+              --region us-east-2 \
+              --create-bucket-configuration LocationConstraint=us-east-2
+          else
+            echo "Bucket already exists."
+          fi
 
       # Install AWS SAM CLI
       - name: Install AWS SAM CLI
         run: |
           pip install aws-sam-cli
+
+      # Touch Lambda file to force deploy (optional)
+      - name: Touch Lambda code to force rebuild
+        run: touch lambda/index.js
 
       # Build Lambda & API Gateway with SAM
       - name: Deploy Lambda & API Gateway with SAM
