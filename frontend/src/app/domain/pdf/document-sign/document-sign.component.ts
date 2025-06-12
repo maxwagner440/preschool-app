@@ -34,8 +34,8 @@ export class DocumentSignComponent implements OnInit {
   signingParent = 1; // 1 or 2
   private initialized = false;
 
-  signaturePad1!: string;
-  signaturePad2!: string;
+  signaturePad1: string | undefined;
+  signaturePad2: string | undefined;
 
   parentFormFirstName: string = '';
   parentFormLastName: string = '';
@@ -135,8 +135,8 @@ export class DocumentSignComponent implements OnInit {
 
   clearAll() {
     this.clearSignature();
-    this.signaturePad1 = '';
-    this.signaturePad2 = '';
+    this.signaturePad1 = undefined;
+    this.signaturePad2 = undefined;
     this.parentFormFirstName = '';
     this.parentFormLastName = '';
     this.parentOneFirstName = '';

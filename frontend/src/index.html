@@ -7,42 +7,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
  
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <!-- <style>
-      .navbar-custom {
-        /* background-color: #185767; */
-        background-color: #b5b5b5;
-        height: 60px;
+    <style>
+      #navbar {
+        transition: all 0.3s ease;
       }
-    
-      .navbar-logo {
-        height: 60px;
-        background: transparent;
-        mix-blend-mode: multiply;
 
+      #navbar.scrolled {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
       }
-    
-      .navbar-custom, .navbar-custom .container-fluid {
-        box-shadow: none;
-        border: none;
+
+      #navbar.scrolled .logo {
+        height: 32px;
       }
-    
-      .navbar-custom .container-fluid {
-        padding: 0;
-        justify-content: center;
+
+      .logo {
+        transition: height 0.3s ease;
       }
-    </style> -->
+
+     nav {
+        width: 100%;
+        background-color: #f9f9f6;
+        padding: 0.75rem 1.5rem;
+        box-shadow: 0 2px 6px black;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 50;
+        position: fixed;
+        img {
+          height: 50px;
+          object-fit: contain;
+        }
+
+        a {
+          color: #185767;
+          margin-left: 1.5rem;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    </style>
+   
   </head>
   <body >
-<!-- 
-    <nav class="navbar navbar-custom">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-          <img src="/assets/preschoolOwlImage.png" alt="Logo" class="navbar-logo">
-        </a>
+    <nav id="navbar" class="w-full bg-[#f9f9f6] shadow-md px-6 flex items-center justify-between z-50 fixed top-0 transition-all duration-300">
+      <div class="flex items-center space-x-3">
+          <img src="assets/preschoolOwlImage.png" alt="Owl Preschool Logo" class="h-10 w-auto object-contain logo" onclick="window.location.reload()" />
       </div>
-    </nav> -->
-    <!-- <body style="background-color: #50a1a3 !important;"> -->
-
+      <div class="hidden md:flex space-x-6">
+        <a href="https://www.independencecoop.org/" class="text-[#185767] hover:underline">Visit Website</a>
+      </div>
+    </nav>
     <app-root></app-root>
+    <script> 
+      document.addEventListener('DOMContentLoaded', function () {
+      const navbar = document.getElementById('navbar');
+      const logo = navbar.querySelector('.logo');
+  
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      });
+    });
+    </script>
   </body>
 </html>
