@@ -7,5 +7,5 @@ export const appRoutes: Route[] = [
     { path: 'parent-manual', component: DisplayComponent },
     { path: 'events', component: EventsCalendarComponent },
     { path: '', redirectTo: 'parent-manual', pathMatch: 'full' },
-    { path: '**', redirectTo: 'parent-manual', pathMatch: 'full' },
+    { path: '**', component: NotFoundComponent },
   ];
