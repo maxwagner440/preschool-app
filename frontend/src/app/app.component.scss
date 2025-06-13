@@ -10,19 +10,13 @@ body {
   padding: 0;
 }
 
-.yellow-color {
-  background-color: #eda840 !important;
-}
+// .yellow-color {
+//   background-color: #eda840 !important;
+// }
 
 .app-container {
-  // background-color: #50a1a3 !important;
-
   max-width: 800px;
-  margin: 5rem auto;
-  // margin-top: 5rem !important;
-  @media (max-width: 768px) {
-    margin: 6rem auto;
-  }
+  margin: 6.5rem auto;
   padding: 1rem;
   background: #ffffff;
   border-radius: 8px;

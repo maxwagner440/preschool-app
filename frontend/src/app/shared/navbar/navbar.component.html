@@ -1,0 +1,19 @@
+<nav class="navbar" [class.scrolled]="scrolled">
+    <div class="logo-container">
+        <img src="assets/preschoolOwlImage.png" alt="Owl Preschool Logo" class="logo" (click)="navigateToParentManual()" />
+    </div>
+    <div class="nav-links" id="desktopLinks">
+        <a routerLink="/events" routerLinkActive="active">Calendar</a>
+        <a href="https://www.independencecoop.org/" target="_blank" rel="noopener">Visit Website</a>
+    </div>
+    <button class="hamburger" aria-label="Open menu" (click)="toggleMobileMenu()">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+    <div class="mobile-menu" [class.open]="mobileMenuOpen">
+        <a (click)="navigateToParentManual()">Parent Manual</a>
+        <a routerLink="/events" (click)="closeMobileMenu()">Calendar</a>
+        <a href="https://www.independencecoop.org/" target="_blank" rel="noopener" (click)="closeMobileMenu()">Visit Website</a>
+    </div>
+</nav>

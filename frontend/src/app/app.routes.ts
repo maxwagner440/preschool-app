@@ -1,9 +1,11 @@
 import { Route } from '@angular/router';
 import { DisplayComponent } from './domain/pdf/display/display.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { EventsCalendarComponent } from './domain/events-calendar/events-calendar.component';
 
 export const appRoutes: Route[] = [
-    { path: '', component: DisplayComponent },
-    { path: '**', component: NotFoundComponent },
-    // { path: '', redirectTo: 'main', pathMatch: 'full' }
+    { path: 'parent-manual', component: DisplayComponent },
+    { path: 'events', component: EventsCalendarComponent },
+    { path: '', redirectTo: 'parent-manual', pathMatch: 'full' },
+    { path: '**', redirectTo: 'parent-manual', pathMatch: 'full' },
   ];
