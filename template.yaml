@@ -38,7 +38,7 @@ Resources:
             Method: POST
             RestApiId: !Ref ApiGateway
 
-  DownloadUrlFunction:ListFilesFunction:
+  ListFilesFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: list-files
