@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { FileService } from '../file.service';
 
 interface UploadedFile {
   key: string;
@@ -15,14 +15,13 @@ interface UploadedFile {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileListComponent { 
-  // private http = inject(HttpClient);
   files: UploadedFile[] = [];
   loading = true;
 
-  constructor(private _http: HttpClient) {
+  constructor(private _fileService: FileService) {
 
 
-    this._http.get<UploadedFile[]>('/api/admin/files').subscribe({
+    this._fileService.getFiles().subscribe({
       next: (files) => {
         this.files = files;
         this.loading = false;
@@ -32,8 +31,7 @@ export class FileListComponent {
   }
 
   download(key: string) {
-    this._http.get<{ url: string }>(`/api/admin/files/download-url?key=${encodeURIComponent(key)}`)
-      .subscribe(res => window.open(res.url, '_blank'));
+    this._fileService.downloadImage(key).subscribe(res => window.open(res.url, '_blank'));
   }
 }
 

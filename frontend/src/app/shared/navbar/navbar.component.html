@@ -4,6 +4,7 @@
     </div>
     <div class="nav-links" id="desktopLinks">
         <a routerLink="/events" routerLinkActive="active">Calendar</a>
+        <a routerLink="/admin" routerLinkActive="active">Admin</a>
         <a href="https://www.independencecoop.org/" target="_blank" rel="noopener">Visit Website</a>
     </div>
     <button class="hamburger" aria-label="Open menu" (click)="toggleMobileMenu()">
@@ -14,6 +15,7 @@
     <div class="mobile-menu" [class.open]="mobileMenuOpen">
         <a (click)="navigateToParentManual()">Parent Manual</a>
         <a routerLink="/events" (click)="closeMobileMenu()">Calendar</a>
+        <a routerLink="/admin" (click)="closeMobileMenu()">Admin</a>
         <a href="https://www.independencecoop.org/" target="_blank" rel="noopener" (click)="closeMobileMenu()">Visit Website</a>
     </div>
 </nav>

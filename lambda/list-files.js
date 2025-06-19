@@ -1,4 +1,4 @@
-const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3');
+import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
 const s3 = new S3Client({ region: 'us-east-2' });
 const BUCKET = process.env.BUCKET_NAME;
