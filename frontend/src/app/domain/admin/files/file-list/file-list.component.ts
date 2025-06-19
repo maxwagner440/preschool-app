@@ -16,6 +16,7 @@ import { UploadedFile } from '../file.interface';
 export class FileListComponent { 
   files$!: Observable<UploadedFile[]>;
   loading = signal(true);
+  isMobile = window.innerWidth <= 600;
 
   constructor(private _fileService: FileService) { }
 

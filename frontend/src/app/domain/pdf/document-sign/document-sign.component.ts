@@ -149,7 +149,7 @@ export class DocumentSignComponent implements OnInit {
   }
 
   getFileName(parentOneLastName: string, parentTwoLastName: string) {
-    return `${parentOneLastName}-${parentTwoLastName}.pdf`;
+    return `${parentOneLastName}-${parentTwoLastName}-PM.pdf`;
   }
 
   sendPdfToS3(blob: Blob): void {
