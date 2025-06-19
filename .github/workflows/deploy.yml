@@ -71,18 +71,20 @@ jobs:
 
       # Install AWS SAM CLI
       - name: Install AWS SAM CLI
+        run: pip install aws-sam-cli
+
+      # Touch all Lambda handlers to force rebuilds
+      - name: Touch all Lambda handler files
         run: |
-          pip install aws-sam-cli
+          touch lambda/index.js
+          touch lambda/list-files.js
+          touch lambda/get-download-url.js
 
-      # Touch Lambda file to force deploy (optional)
-      - name: Touch Lambda code to force rebuild
-        run: touch lambda/index.js
-
-      # Build Lambda & API Gateway with SAM
+      # Build & Deploy all Lambda functions and API Gateway with SAM
       - name: Deploy Lambda & API Gateway with SAM
         run: |
           sam build -t template.yaml
           sam deploy --stack-name presigned-url-stack \
-                      --s3-bucket sam-deploy-bucket-owl-preschool \
-                      --region us-east-2 \
-                      --capabilities CAPABILITY_IAM
+                     --s3-bucket sam-deploy-bucket-owl-preschool \
+                     --region us-east-2 \
+                     --capabilities CAPABILITY_IAM
