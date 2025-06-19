@@ -1,32 +1,32 @@
-<div class="p-6" >
-    <h1 class="text-2xl font-bold mb-4">Uploaded Files</h1>
-  
-    <div *ngIf="loading()">Loading...</div>
-  
-    <div *ngIf="files$ | async as files">
+<div class="container-fluid px-3 py-4">
+  <h1 class="h4 fw-bold mb-4">Uploaded Files</h1>
 
-      {{files.length}}
-    <table *ngIf="!loading() && files.length > 0" class="w-full text-left border rounded shadow-sm bg-white">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="px-4 py-2">Filename</th>
-          <th class="px-4 py-2">Uploaded At</th>
-          <th class="px-4 py-2">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let file of files" class="border-t">
-          <td class="px-4 py-2">{{ file.key }}</td>
-          <td class="px-4 py-2">{{ file.uploadedAt | date:'short' }}</td>
-          <td class="px-4 py-2">
-            <button (click)="download(file.key)" class="text-blue-600 hover:underline">Download</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  
-      <div *ngIf="!loading() && files.length === 0" class="text-gray-500">No files uploaded yet.</div>
+  <div *ngIf="loading()">Loading...</div>
+
+  <div *ngIf="files$ | async as files">
+    <div *ngIf="!loading() && files.length > 0" class="table-responsive">
+      <table class="table table-bordered table-striped align-middle w-100">
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="text-nowrap">Filename</th>
+            <th scope="col" class="text-nowrap">Uploaded At</th>
+            <th scope="col" class="text-nowrap">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let file of files">
+            <td class="text-break small" style="min-width: 200px;">{{ file.key }}</td>
+            <td class="small" style="min-width: 140px;">{{ file.uploadedAt | date: 'short' }}</td>
+            <td style="min-width: 100px;">
+              <button (click)="download(file.key)" class="btn btn-sm btn-outline-primary">
+                Download
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
+    <div *ngIf="!loading() && files.length === 0" class="text-muted">No files uploaded yet.</div>
   </div>
-  
+</div>
