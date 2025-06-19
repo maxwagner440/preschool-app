@@ -1,10 +1,11 @@
 import { ChangeDetectorRef, Component, ElementRef, input, output,  ViewChild, OnInit } from '@angular/core';
-import SignaturePad from 'signature_pad';
 import { PDFDocument, PDFImage, rgb, StandardFonts } from 'pdf-lib';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FileUploadService } from '../file-upload.service';
 import { Subscription } from 'rxjs';
+import SignaturePad from 'signature_pad';
+
 
 @Component({
   selector: 'app-document-sign',
@@ -147,17 +148,8 @@ export class DocumentSignComponent implements OnInit {
 
   }
 
-  getFileName(parentName: string) {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-
-    const filenameDate = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-    return `${parentName}-${this.baseFileName()}-${filenameDate}.pdf`;
+  getFileName(parentOneLastName: string, parentTwoLastName: string) {
+    return `${parentOneLastName}-${parentTwoLastName}.pdf`;
   }
 
   sendPdfToS3(blob: Blob): void {
@@ -165,7 +157,7 @@ export class DocumentSignComponent implements OnInit {
       this.saving = true;
       this.subscription.add(
         this._fileUploadService.getPresignedUrl(
-          this.getFileName(this.parentOneLastName),
+          this.getFileName(this.parentOneLastName, this.parentTwoLastName),
           'application/pdf'
         ).subscribe({
           next: async (response) => {
@@ -214,7 +206,7 @@ export class DocumentSignComponent implements OnInit {
       const url = URL.createObjectURL(this.latestPdfBlob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = this.getFileName(this.parentOneLastName);  
+      link.download = this.getFileName(this.parentOneLastName, this.parentTwoLastName);  
       link.click();
     }
   }
@@ -248,43 +240,6 @@ export class DocumentSignComponent implements OnInit {
     this.parentFormLastName = '';
     this.showSignModal = false;
   }
-
-  // async addSignaturesToPdf(signatPadString:string, parentNumber: number, parentFirstName: string, parentLastName: string) {
-  //   const pdfBytes = await fetch(this.pdfUrl()).then(res => res.arrayBuffer());
-  //   const pdfDoc = await PDFDocument.load(pdfBytes);
-
-  //   const parentSignatureBytes = await fetch(signatPadString).then(res => res.arrayBuffer());
-  //   const parentImage = await pdfDoc.embedPng(parentSignatureBytes);
-
-  //   if(parentNumber === 1) {  
-  //     this.parentOneImage = parentImage;
-  //   } else {
-  //     this.parentTwoImage = parentImage;  
-  //   }
-
-  //   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  //   const pages = pdfDoc.getPages();
-  //   const lastPage = pages[pages.length - 1];
-
-  //   lastPage.drawText(`Parent ${this.signingParent}: ${parentFirstName} ${parentLastName}`, {
-  //     x: 50,
-  //     y: parentNumber === 1 ? 200 : 100,
-  //     size: 12,
-  //     font,
-  //     color: rgb(0, 0, 0)
-  //   });
-   
-  //   lastPage.drawImage(parentImage, {
-  //     x: 250,
-  //     y: parentNumber === 1 ? 190 : 90,
-  //     width: 150,
-  //     height: 30
-  //   });
-
-  //   const signedPdfBytes = await pdfDoc.save();
-  //   const blob = new Blob([new Uint8Array(signedPdfBytes)], { type: 'application/pdf' });
-  //   this.onSignatureComplete(blob);
-  // }
 
   async addSignaturesToPdf(
     signatPadString: string,

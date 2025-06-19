@@ -9,18 +9,19 @@ const allowedOrigins = [
 
 export const handler = async (event) => {
     try{
+      const UPLOADS_PREFIX = 'uploads/';
       const origin = event.headers.origin;
       const ALLOWED_ORIGIN = allowedOrigins.includes(origin) ? origin : 'http://owl-preschool-host.s3-website.us-east-2.amazonaws.com';
     
         const command = new ListObjectsV2Command({
             Bucket: BUCKET,
-            Prefix: 'uploads/',
+            Prefix: UPLOADS_PREFIX,
           });
         
           const data = await s3.send(command);
         
           const files = (data.Contents || []).map((file) => ({
-            key: file.Key,
+            key: file.Key.replace(UPLOADS_PREFIX, ''),
             uploadedAt: file.LastModified,
           }));
         
