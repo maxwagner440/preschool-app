@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FileService } from '../file.service';
+import { Observable, tap } from 'rxjs';
+import { UploadedFile } from '../file.interface';
 
-interface UploadedFile {
-  key: string;
-  uploadedAt: string;
-}
+
 
 @Component({
   selector: 'app-file-list',
@@ -15,19 +14,21 @@ interface UploadedFile {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileListComponent { 
-  files: UploadedFile[] = [];
-  loading = true;
+  files$!: Observable<UploadedFile[]>;
+  loading = signal(true);
 
-  constructor(private _fileService: FileService) {
+  constructor(private _fileService: FileService) { }
 
+  ngOnInit() {
+    this.files$ = this.getFiles();
+  }
 
-    this._fileService.getFiles().subscribe({
-      next: (files) => {
-        this.files = files;
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
+  getFiles(): Observable<UploadedFile[]> {
+    return this._fileService.getFiles().pipe(
+      tap((files) => {
+        this.loading.set(false);
+      })
+    );
   }
 
   download(key: string) {
