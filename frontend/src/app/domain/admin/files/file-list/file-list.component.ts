@@ -37,7 +37,8 @@ export class FileListComponent {
   }
 
   download(key: string) {
-    this._fileService.downloadImage(key).subscribe(res => window.open(res.url, '_blank'));
+    const keyWithUploads = `uploads/${key}`;
+    this._fileService.downloadImage(keyWithUploads).subscribe(res => window.open(res.url, '_blank'));
   }
 }
 
