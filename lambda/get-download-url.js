@@ -10,6 +10,7 @@ export const handler = async (event) => {
   if (!key) {
     return {
       statusCode: 400,
+      
       body: JSON.stringify({ message: 'Missing file key' }),
     };
   }
@@ -20,6 +21,10 @@ export const handler = async (event) => {
   return {
     statusCode: 200,
     body: JSON.stringify({ url }),
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // ✅ Allow local testing — restrict in prod
+        'Access-Control-Allow-Credentials': false,
+    },
   };
 };
