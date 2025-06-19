@@ -2,6 +2,7 @@ import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
 const s3 = new S3Client({ region: 'us-east-2' });
 const BUCKET = process.env.BUCKET_NAME;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 
 export const handler = async () => {
     try{
@@ -21,7 +22,7 @@ export const handler = async () => {
             statusCode: 200,
             body: JSON.stringify(files),
             headers: {
-                'Access-Control-Allow-Origin': '*', // ✅ Allow local testing — restrict in prod
+                'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
                 'Access-Control-Allow-Credentials': false,
                 'Content-Type': 'application/json',
             },

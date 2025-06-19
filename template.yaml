@@ -9,7 +9,7 @@ Resources:
     Properties:
       StageName: Prod
       Cors:
-        AllowMethods: "'OPTIONS,POST'"
+        AllowMethods: "'GET,OPTIONS,POST'"
         AllowHeaders: "'Content-Type'"
         AllowOrigin: "'*'"
 
@@ -30,6 +30,7 @@ Resources:
       Environment:
         Variables:
           BUCKET_NAME: image-bucket-owl-preschool
+          ALLOWED_ORIGIN: http://owl-preschool-host.s3-website.us-east-2.amazonaws.com
       Events:
         ApiEvent:
           Type: Api
@@ -58,6 +59,7 @@ Resources:
       Environment:
         Variables:
           BUCKET_NAME: image-bucket-owl-preschool
+          ALLOWED_ORIGIN: http://owl-preschool-host.s3-website.us-east-2.amazonaws.com
       Events:
         ApiEvent:
           Type: Api
@@ -83,6 +85,7 @@ Resources:
       Environment:
         Variables:
           BUCKET_NAME: image-bucket-owl-preschool
+          ALLOWED_ORIGIN: http://owl-preschool-host.s3-website.us-east-2.amazonaws.com
       Events:
         ApiEvent:
           Type: Api

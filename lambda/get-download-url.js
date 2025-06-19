@@ -4,6 +4,8 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 const s3 = new S3Client({ region: 'us-east-2' });
 const BUCKET = process.env.BUCKET_NAME;
 
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+
 export const handler = async (event) => {
   const key = event.queryStringParameters?.key;
 
@@ -23,7 +25,7 @@ export const handler = async (event) => {
     body: JSON.stringify({ url }),
     headers: { 
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*', // ✅ Allow local testing — restrict in prod
+        'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
         'Access-Control-Allow-Credentials': false,
     },
   };
