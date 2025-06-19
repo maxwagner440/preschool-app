@@ -3,11 +3,16 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const s3 = new S3Client({ region: 'us-east-2' });
 const BUCKET = process.env.BUCKET_NAME;
-
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://owl-preschool-host.s3-website.us-east-2.amazonaws.com',
+];
 
 export const handler = async (event) => {
   const key = event.queryStringParameters?.key;
+
+  const origin = event.headers.origin;
+  const ALLOWED_ORIGIN = allowedOrigins.includes(origin) ? origin : 'http://owl-preschool-host.s3-website.us-east-2.amazonaws.com';
 
   if (!key) {
     return {

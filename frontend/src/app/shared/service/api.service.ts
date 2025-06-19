@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ApiService {
     // TODO: Make this configurable
-  baseUrl = 'https://e3vfz5egai.execute-api.us-east-2.amazonaws.com/Prod';
+  baseUrl = 'https://e3vfz5egai.execute-api.us-east-2.amazonaws.com/Stage';
   constructor(private http: HttpClient) {}
 
   get<T>(endpoint: string, params?: HttpParams | {[param: string]: string | string[]}, headers?: HttpHeaders): Observable<T> {
