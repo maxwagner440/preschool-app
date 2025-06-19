@@ -6,6 +6,12 @@ import { EventsCalendarComponent } from './domain/events-calendar/events-calenda
 export const appRoutes: Route[] = [
     { path: 'parent-manual', component: DisplayComponent },
     { path: 'events', component: EventsCalendarComponent },
+    {
+      path: 'admin',
+      loadComponent: () => import('./domain/admin/files/file-list/file-list.component').then(m => m.FileListComponent),
+      // canActivate: [AdminGuard] // Optional
+    },
+
     { path: '', redirectTo: 'parent-manual', pathMatch: 'full' },
     { path: '**', component: NotFoundComponent },
   ];

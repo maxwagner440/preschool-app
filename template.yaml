@@ -37,3 +37,56 @@ Resources:
             Path: /generate-presigned-url
             Method: POST
             RestApiId: !Ref ApiGateway
+
+  DownloadUrlFunction:ListFilesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: list-files
+      Handler: list-files.handler
+      Runtime: nodejs18.x
+      CodeUri: lambda
+      Timeout: 10
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: s3:ListBucket
+              Resource: arn:aws:s3:::image-bucket-owl-preschool
+            - Effect: Allow
+              Action: s3:GetObject
+              Resource: arn:aws:s3:::image-bucket-owl-preschool/uploads/*
+      Environment:
+        Variables:
+          BUCKET_NAME: image-bucket-owl-preschool
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /list-files
+            Method: GET
+            RestApiId: !Ref ApiGateway
+
+  GetDownloadUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: get-download-url
+      Handler: get-download-url.handler
+      Runtime: nodejs18.x
+      CodeUri: lambda
+      Timeout: 10
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: s3:GetObject
+              Resource: arn:aws:s3:::image-bucket-owl-preschool/uploads/*
+      Environment:
+        Variables:
+          BUCKET_NAME: image-bucket-owl-preschool
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /download-url
+            Method: GET
+            RestApiId: !Ref ApiGateway
