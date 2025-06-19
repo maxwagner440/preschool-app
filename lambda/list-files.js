@@ -3,7 +3,7 @@ import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 const s3 = new S3Client({ region: 'us-east-2' });
 const BUCKET = process.env.BUCKET_NAME;
 
-exports.handler = async () => {
+export const handler = async () => {
   const command = new ListObjectsV2Command({
     Bucket: BUCKET,
     Prefix: 'uploads/',
