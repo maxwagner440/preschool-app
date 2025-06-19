@@ -83,7 +83,9 @@ Resources:
               Action: 
                 - s3:GetObject
                 - s3:ListBucket
-              Resource: arn:aws:s3:::image-bucket-owl-preschool/uploads/*
+              Resource:
+                - arn:aws:s3:::image-bucket-owl-preschool            # <- For ListBucket
+                - arn:aws:s3:::image-bucket-owl-preschool/uploads/*  # <- For GetObject
       Environment:
         Variables:
           BUCKET_NAME: image-bucket-owl-preschool
