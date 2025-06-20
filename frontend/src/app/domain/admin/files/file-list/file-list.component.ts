@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FileService } from '../file.service';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, tap, timer, switchMap } from 'rxjs';
 import { UploadedFile } from '../file.interface';
 
 
@@ -25,14 +25,24 @@ export class FileListComponent {
   }
 
   getFiles(): Observable<UploadedFile[]> {
-    return this._fileService.getFiles().pipe(
-      map((files: UploadedFile[]) => files.map((file) => ({
-        ...file,
-        key: file.key.replace('uploads/', ''),
-      }))),
-      tap((files) => {
-        this.loading.set(false);
-      })
+    // return this._fileService.getFiles().pipe(
+    //   map((files: UploadedFile[]) => files.map((file) => ({
+    //     ...file,
+    //     key: file.key.replace('uploads/', ''),
+    //   }))),
+    //   tap((files) => {
+    //     this.loading.set(false);
+    //   })
+    return timer(1000).pipe(
+      switchMap(() => 
+        this._fileService.getFiles().pipe(
+          map((files: UploadedFile[]) => files.map(file => ({
+            ...file,
+            key: file.key.replace('uploads/', ''),
+          }))),
+          tap(() => this.loading.set(false))
+        )
+      )
     );
   }
 

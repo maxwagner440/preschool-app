@@ -41,9 +41,7 @@ export class DocumentSignComponent implements OnInit {
   parentFormFirstName: string = '';
   parentFormLastName: string = '';
 
-  parentOneFirstName: string = '';
   parentOneLastName: string = '';
-  parentTwoFirstName: string = '';
   parentTwoLastName: string = '';
   
   signaturePadError: boolean = false;
@@ -140,9 +138,7 @@ export class DocumentSignComponent implements OnInit {
     this.signaturePad2 = undefined;
     this.parentFormFirstName = '';
     this.parentFormLastName = '';
-    this.parentOneFirstName = '';
     this.parentOneLastName = '';
-    this.parentTwoFirstName = '';
     this.parentTwoLastName = '';
     this.signedPdfBlobUrl.emit(this.originalPdfUrl);
 
@@ -227,12 +223,12 @@ export class DocumentSignComponent implements OnInit {
       
     if (this.signingParent === 1) {
       this.signaturePad1 = this.signaturePad.toDataURL();
-      this.parentOneFirstName = this.parentFormFirstName;
       this.parentOneLastName = this.parentFormLastName;
       this.addSignaturesToPdf(this.signaturePad1, 1, this.parentFormFirstName, this.parentFormLastName);
 
     } else {
       this.signaturePad2 = this.signaturePad.toDataURL();
+      this.parentTwoLastName = this.parentFormLastName;
       this.addSignaturesToPdf(this.signaturePad2, 2, this.parentFormFirstName, this.parentFormLastName);
     }
 

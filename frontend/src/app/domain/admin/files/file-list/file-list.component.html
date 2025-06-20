@@ -1,36 +1,36 @@
 <div class="container-fluid px-3 py-4">
-  <h1 class="h4 fw-bold mb-4">Uploaded Files</h1>
+  <div class="card shadow-sm border-0 rounded-2 overflow-hidden">
+    <div class="card-body p-3 bg-white">
+      <h2 class="h5 fw-semibold mb-3 text-black">Uploaded Files</h2>
 
-  <div *ngIf="loading()">Loading...</div>
+      <div *ngIf="loading()" class="text-muted">Lets see the damn files...</div>
 
-  <div *ngIf="files$ | async as files">
-    <div *ngIf="!loading() && files.length > 0" class="table-responsive border-radius-5">
-      <table class="table table-bordered table-striped align-middle w-100">
-        <thead class="table-light">
-          <tr>
-            <th scope="col" class="text-nowrap">Filename</th>
-            <th scope="col" class="text-nowrap">Uploaded At</th>
-            <th scope="col" class="text-nowrap">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let file of files" >
-            <td class="text-break small text-color" style="min-width: 200px;">{{ file.key }}</td>
-            <td class="small text-color" style="min-width: 140px;">{{ file.uploadedAt | date: 'short' }}</td>
-            <td style="min-width: 100px;" >
-             <div class="d-flex justify-content-center">
-                <button (click)="download(file.key)" class="btn btn-sm btn-outline-primary">
-                  <div class="d-flex justify-content-center m-1">
-                    <i class="bi bi-download"></i>@if(!isMobile) { <span class="span-margin">Download</span>}
-                  </div>
-                </button> 
-              </div>             
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div *ngIf="files$ | async as files">
+        <table class="table table-sm mb-0 align-middle">
+          <thead class="text-secondary small border-bottom-style" >
+            <tr>
+              <th class="fw-semibold">Filename</th>
+              <th class="fw-semibold">Signed At</th>
+              <th class="text-end fw-semibold">@if(!isMobile) {Download} </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let file of files" class="border-top">
+              <td class="text-break small py-2" style="max-width: 240px;">{{ file.key }}</td>
+              <td class="small py-2">{{ file.uploadedAt | date: 'mediumDate' }}</td>
+              <td class="d-flex justify-content-end py-2">
+                <button (click)="download(file.key)" class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center px-2">
+                  <i class="bi bi-download"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="!loading() && files.length === 0" class="text-muted mt-3">
+          No files uploaded yet.
+        </div>
+      </div>
     </div>
-
-    <div *ngIf="!loading() && files.length === 0" class="text-muted">No files uploaded yet.</div>
   </div>
 </div>

@@ -89,3 +89,7 @@ And join the Nx community:
 npx nx serve frontend
 
 npx nx serve backend
+
+
+
+secret admin URL: http://owl-preschool-host.s3-website.us-east-2.amazonaws.com/admin/alissa/files/aslkdjfalwerri342u39048

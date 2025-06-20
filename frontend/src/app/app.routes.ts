@@ -7,7 +7,7 @@ export const appRoutes: Route[] = [
     { path: 'parent-manual', component: DisplayComponent },
     { path: 'events', component: EventsCalendarComponent },
     {
-      path: 'admin',
+      path: 'admin/alissa/files/aslkdjfalwerri342u39048',
       loadComponent: () => import('./domain/admin/files/file-list/file-list.component').then(m => m.FileListComponent),
       // canActivate: [AdminGuard] // Optional
     },
