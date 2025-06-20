@@ -13,6 +13,7 @@
     <span *ngIf="!signaturePad1"><i class="bi bi-plus"></i> Sign </span>
   </div>
 
+  @if (showSecondSignee) {
   <div
     class="signature-preview"
     [ngClass]="{ 'has-signature': !!signaturePad2, 'disabled': !enabled() }"
@@ -21,12 +22,21 @@
     <img *ngIf="signaturePad2" [src]="signaturePad2" alt="Parent 2 Signature" />
     <span *ngIf="!signaturePad2"><i class="bi bi-plus"></i> Sign </span>
   </div>
+  } @else {
+    <!-- <div class="add-signee-container">
+      <button class="btn btn-secondary" [disabled]="!enabled()" (click)="addSignee()">+ Add Second Signee</button>
+    </div> -->
+
+    <button class="btn btn-link text-decoration-none" [disabled]="!enabled()" (click)="addSignee()">
+      <i class="bi bi-plus-circle me-1"></i> Add another signature
+    </button> 
+  }
 
   <hr class="my-4 line" />
 
   <div class="d-flex justify-content-end">
     <button class="btn btn-secondary me-2" (click)="clearAll()"> Clear All</button>
-    <button class="btn btn-primary" [ngClass]="{ 'disabled': (!signaturePad1 && !signaturePad2) }" [disabled]="(!signaturePad1 && !signaturePad2) || saving"  (click)="saveSignatures()">
+    <button class="btn btn-primary" [ngClass]="{ 'disabled': (!isReadyToSave) }" [disabled]="(!isReadyToSave) || saving"  (click)="saveSignatures()">
       {{ saving ? 'Saving...' : 'Save Document' }} <span
       *ngIf="saving"
       class="spinner-border spinner-border-sm me-2"
@@ -34,31 +44,8 @@
       aria-hidden="true"
     ></span></button>
   </div>
-  <!-- <div class="dropdown my-2">
-    <button
-      class="btn btn-outline-secondary dropdown-toggle w-100"
-      type="button"
-      id="dropdownMenuButton"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-    >
-      Download Options
-    </button>
-    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-      <li>
-        <a class="dropdown-item" href="#" (click)="downloadOriginalPdf()">Download Original Document</a>
-      </li>
-      <li *ngIf="latestPdfBlob" >
-        <a
-          class="dropdown-item"
-          href="#"
-          (click)="latestPdfBlob && downloadSignedPdf()"
-        >
-          Download Signed Document
-        </a>
-      </li>
-    </ul>
-  </div> -->
+
+  
   <div class="download-buttons d-flex gap-2 my-3">
     <button class="btn btn-outline-primary" (click)="downloadOriginalPdf()">
       <i class="bi bi-download me-2"></i> Download Original Document

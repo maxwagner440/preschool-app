@@ -52,6 +52,8 @@ export class DocumentSignComponent implements OnInit {
   showErrorToast = false;
   subscription = new Subscription();
   saving = false;
+  showSecondSignee = false;
+
   constructor(private _fileUploadService: FileUploadService, private cdr: ChangeDetectorRef) {
   }
 
@@ -141,7 +143,8 @@ export class DocumentSignComponent implements OnInit {
     this.parentOneLastName = '';
     this.parentTwoLastName = '';
     this.signedPdfBlobUrl.emit(this.originalPdfUrl);
-
+    this.showSecondSignee = false;
+    this.latestPdfBlob = null;
   }
 
   getFileName(parentOneLastName: string, parentTwoLastName: string) {
@@ -192,7 +195,12 @@ export class DocumentSignComponent implements OnInit {
   }
 
   async saveSignatures() {
-    if(this.latestPdfBlob) {
+    if (!this.isReadyToSave) {
+        this.triggerErrorToast();
+        console.error('Signatures are not ready to be saved.');
+        return;
+    }
+    if (this.latestPdfBlob) {
       this.sendPdfToS3(this.latestPdfBlob);
     }
   }
@@ -309,6 +317,15 @@ export class DocumentSignComponent implements OnInit {
     const blob = new Blob([new Uint8Array(signedPdfBytes)], { type: 'application/pdf' });
     this.onSignatureComplete(blob);
   }
-  
 
+  addSignee() {
+    this.showSecondSignee = true;
+  }
+
+  get isReadyToSave(): boolean {
+    if (this.saving) return false;
+    if (!this.signaturePad1) return false;
+    if (this.showSecondSignee && !this.signaturePad2) return false;
+    return true;
+  }
 }
