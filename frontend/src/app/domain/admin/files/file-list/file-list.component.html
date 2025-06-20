@@ -19,9 +19,11 @@
               <td class="text-break small py-2" style="max-width: 240px;">{{ file.key }}</td>
               <td class="small py-2">{{ file.uploadedAt | date: 'mediumDate' }}</td>
               <td class="py-2">
-                <button (click)="download(file.key)" class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center px-2">
-                  <i class="bi bi-download"></i>
-                </button>
+                <div class="d-flex justify-content-end">
+                  <button (click)="download(file.key)" class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center px-2">
+                    <i class="bi bi-download"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>

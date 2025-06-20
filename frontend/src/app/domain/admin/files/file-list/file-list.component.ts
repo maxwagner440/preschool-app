@@ -25,14 +25,6 @@ export class FileListComponent {
   }
 
   getFiles(): Observable<UploadedFile[]> {
-    // return this._fileService.getFiles().pipe(
-    //   map((files: UploadedFile[]) => files.map((file) => ({
-    //     ...file,
-    //     key: file.key.replace('uploads/', ''),
-    //   }))),
-    //   tap((files) => {
-    //     this.loading.set(false);
-    //   })
     return timer(1000).pipe(
       switchMap(() => 
         this._fileService.getFiles().pipe(
