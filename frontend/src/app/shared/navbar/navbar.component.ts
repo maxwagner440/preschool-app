@@ -36,6 +36,7 @@ export class NavbarComponent {
       if (menu) menu.classList.toggle('open', this.mobileMenuOpen);
     });
   }
+
   closeMobileMenu() {
     this.mobileMenuOpen = false;
     setTimeout(() => {
@@ -43,7 +44,9 @@ export class NavbarComponent {
       if (menu) menu.classList.remove('open');
     });
   }
+
   navigateToParentManual() {
     this.router.navigate(['/parent-manual']);
+    this.closeMobileMenu();
   }
 } 

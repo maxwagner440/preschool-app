@@ -3,7 +3,7 @@
         <img src="assets/preschoolOwlImage.png" alt="Owl Preschool Logo" class="logo" (click)="navigateToParentManual()" />
     </div>
     <div class="nav-links" id="desktopLinks">
-        <a routerLink="/events" routerLinkActive="active">Calendar</a>
+        <!-- <a routerLink="/events" routerLinkActive="active">Calendar</a> -->
         <!-- <a routerLink="/admin/alissa/files" routerLinkActive="active">Admin</a> -->
         <a href="https://www.independencecoop.org/" target="_blank" rel="noopener">Visit Website</a>
     </div>
@@ -14,7 +14,7 @@
     </button>
     <div class="mobile-menu" [class.open]="mobileMenuOpen">
         <a (click)="navigateToParentManual()">Parent Manual</a>
-        <a routerLink="/events" (click)="closeMobileMenu()">Calendar</a>
+        <!-- <a routerLink="/events" (click)="closeMobileMenu()">Calendar</a> -->
         <!-- <a routerLink="/admin/alissa/files" (click)="closeMobileMenu()">Admin</a> -->
         <a href="https://www.independencecoop.org/" target="_blank" rel="noopener" (click)="closeMobileMenu()">Visit Website</a>
     </div>
