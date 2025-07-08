@@ -1,18 +1,11 @@
-<!-- <div class="d-flex justify-content-end bg-dark text-light my-3">
-  <button class="btn btn-secondary" (click)="downloadOriginalPdf()">Download Manual</button>
-</div>
-<div class="pdf-viewer-container">
-    <pdf-viewer 
-      [src]="pdfUrl" 
-      [render-text]="true" 
-      [show-all]="true"
-      [fit-to-page]="true" 
-      class="pdf-viewer">
-    </pdf-viewer>
-  </div> -->
-  <!-- <div class="d-flex justify-content-end bg-dark text-light my-3">
-    <button class="btn btn-secondary" (click)="downloadOriginalPdf()">Download Manual</button>
-  </div> -->
+  <div class="instructions-container">
+    <h2>Instructions</h2>
+    <p>
+      Please read the entire document by navigating from left to right. 
+      When you reach the end of the document, you can then scroll down to sign.
+    </p>
+  </div>
+  <hr class="my-5" />
   <div class="pdf-viewer-container">
     <ngx-extended-pdf-viewer
       [src]="currentPdfUrl"
